@@ -4,9 +4,9 @@ public class Account {
     private String name;
     private String pin;
     private int balance;
-    private int accNumber;
+    private String accNumber;
 
-    public Account(String name, String pin, int balance, int accNumber) {
+    public Account(String name, String pin, int balance, String accNumber) {
         this.name = name;
         this.pin = pin;
         this.balance = balance;
@@ -39,11 +39,11 @@ public class Account {
         this.balance = balance;
     }
 
-    public int getAccNumber() {
+    public String getAccNumber() {
         return accNumber;
     }
 
-    public void setAccNumber(int accNumber) {
+    public void setAccNumber(String accNumber) {
         this.accNumber = accNumber;
     }
 }
