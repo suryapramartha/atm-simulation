@@ -31,7 +31,7 @@ public class DataValidation {
             errorMessage = "PIN should have 6 digits length";
         }
         else if(!accPin.matches("[0-9]+")){
-            errorMessage = "PIN Number should only contains numbers";
+            errorMessage = "PIN should only contains numbers";
         }else {
             for(int i=0; i< accData.size(); i++){
                 if(accNumber.equalsIgnoreCase(accData.get(i).getAccNumber()) &&
