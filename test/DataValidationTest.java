@@ -12,16 +12,20 @@ import static org.junit.Assert.assertEquals;
 
 public class DataValidationTest {
 
-    String errorMessage = null;
-    boolean isLoggedIn = false;
-    Account accountData = null;
+    String errorMessage;
+    boolean isLoggedIn;
+    Account accountData;
 
-    Map<String,Object> result = new HashMap<>();
-    UserData userData = new UserData();
+    Map<String,Object> result;
+    UserData userData;
 
     @Before
     public void setUp() {
-        List<Account> accData = userData.getUserData();
+        errorMessage = null;
+        isLoggedIn = false;
+        accountData = null;
+
+        result = new HashMap<>();
     }
 
     @Test
