@@ -45,20 +45,34 @@ public class Main {
 
     public static void transactionScreen(Account account) {
         Scanner scanner = new Scanner(System.in);
-        String choice;
-        do {
-
-            System.out.println("=====Transaction Screen=====");
-            System.out.println("1. Withdraw");
-            System.out.println("2. Fund Transfer");
-            System.out.println("3. Exit");
-            System.out.print("Please choose option[3]: ");
-            choice = scanner.nextLine();
-
-            System.out.println("choice : "+choice);
+        System.out.println("=====Transaction Screen=====");
+        System.out.println("1. Withdraw");
+        System.out.println("2. Fund Transfer");
+        System.out.println("3. Exit");
+        System.out.print("Please choose option[3]: ");
+        String choice = scanner.nextLine();
+        switch (choice) {
+            case "1":
+                withdrawScreen();
+                break;
+            case "2":
+                fundTransferScreen();
+                break;
+            case "3":
+                welcomeScreen(false);
+                break;
+            default:
+                welcomeScreen(false);
         }
-        while (!choice.equalsIgnoreCase("3") || choice.equals(""));
-        welcomeScreen(false);
 
+
+    }
+
+    public static void withdrawScreen() {
+        System.out.println("withdraw screen");
+    }
+
+    public static void fundTransferScreen() {
+        System.out.println(("fund transfer screen"));
     }
 }
