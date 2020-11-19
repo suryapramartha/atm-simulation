@@ -51,21 +51,19 @@ public class Main {
         System.out.println("3. Exit");
         System.out.print("Please choose option[3]: ");
         String choice = scanner.nextLine();
-        switch (choice) {
-            case "1":
-                withdrawScreen();
-                break;
-            case "2":
-                fundTransferScreen();
-                break;
-            case "3":
-                welcomeScreen(false);
-                break;
-            default:
-                welcomeScreen(false);
+        
+        if(choice.equalsIgnoreCase("1")) {
+            withdrawScreen();
+        }else if(choice.equalsIgnoreCase("2")){
+            fundTransferScreen();
+        }else if(choice.equalsIgnoreCase("3")){
+            welcomeScreen(false);
+        }else if(!(choice.equalsIgnoreCase("1") || choice.equalsIgnoreCase("2") ||
+        choice.equalsIgnoreCase("3")) && !choice.isEmpty()) {
+            transactionScreen(account);
+        }else {
+            welcomeScreen(false);
         }
-
-
     }
 
     public static void withdrawScreen() {
