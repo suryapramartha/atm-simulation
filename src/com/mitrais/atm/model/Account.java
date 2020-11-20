@@ -49,18 +49,4 @@ public class Account {
     public void setAccNumber(String accNumber) {
         this.accNumber = accNumber;
     }
-
-    public Map<String,Object> withdrawFunds(Account account, int deduction) {
-        Map<String,Object> result = new HashMap<>();
-        boolean isSufficient = true;
-        int balance = account.getBalance();
-        if(balance >= deduction) {
-            account.setBalance(balance - deduction);
-        }else {
-            isSufficient = false;
-        }
-        result.put("isSufficient", isSufficient);
-        result.put("account", account);
-        return result;
-    }
 }

@@ -1,27 +1,21 @@
 import com.mitrais.atm.model.Account;
 import com.mitrais.atm.util.DataValidation;
+import com.mitrais.atm.util.RandomNumberGenerator;
+import com.mitrais.atm.util.UserData;
 
-import javax.xml.crypto.Data;
-import java.io.IOException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
 public class Main {
 
-
-    public static void main(String[] args) throws IOException {
-
-        boolean loggedIn = false;
-        welcomeScreen(loggedIn);
+    public static void main(String[] args) {
+        welcomeScreen(false);
     }
 
     private static void welcomeScreen(boolean loggedIn) {
         Scanner scanner = new Scanner(System.in);
+        DataValidation validation = new DataValidation();
 
         String errorMessage = null;
-        DataValidation validation = new DataValidation();
 
         Map<String,Object> res;
 
@@ -58,7 +52,7 @@ public class Main {
         if(choice.equalsIgnoreCase("1")) {
             withdrawScreen(account);
         }else if(choice.equalsIgnoreCase("2")){
-            fundTransferScreen();
+            fundTransferScreen(account);
         }else if(choice.equalsIgnoreCase("3")){
             welcomeScreen(false);
         }else if(!(choice.equalsIgnoreCase("1") || choice.equalsIgnoreCase("2") ||
@@ -104,19 +98,107 @@ public class Main {
         }
     }
 
-    private static void processWithdraw(Account account, int i) {
-        Map<String, Object> result;
-        result = account.withdrawFunds(account, i);
-        if (result.get("isSufficient").equals(true)) {
-            summaryScreen((Account) result.get("account"), i);
+    private static void processWithdraw(Account account, int deduction) {
+        boolean isSufficient = true;
+        int balance = account.getBalance();
+        if(balance >= deduction) {
+            account.setBalance(balance - deduction);
+        }else {
+            isSufficient = false;
+        }
+        if (isSufficient) {
+            summaryScreen(account, deduction);
         } else {
             System.out.println("Insufficient balance $" + account.getBalance());
             withdrawScreen(account);
         }
     }
 
-    public static void fundTransferScreen() {
-        System.out.println(("fund transfer screen"));
+    private static void processFundTransfer(Account origin, Account dest, String amount, String refNo) {
+        origin.setBalance(origin.getBalance() - Integer.parseInt(amount));
+        dest.setBalance(dest.getBalance() + Integer.parseInt(amount));
+
+        fundTransferSummary(origin, dest, amount, refNo);
+    }
+
+    private static void fundTransferSummary(Account origin, Account dest, String amount, String refNo) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("=======Fund Transfer Summary=======");
+        System.out.println("Destination Account : "+ dest.getAccNumber());
+        System.out.println("Transfer Amount : $"+ amount);
+        System.out.println("Reference Number : "+ refNo);
+        System.out.println("Balance : $"+ origin.getBalance());
+        System.out.println("\n");
+        System.out.println("1. Transaction");
+        System.out.println("2. Exit");
+
+        System.out.print("Please choose option[2]: ");
+        String choice = scanner.nextLine();
+
+        if(choice.equalsIgnoreCase("1")) {
+            transactionScreen(origin);
+        }else if(choice.equalsIgnoreCase("2")){
+            welcomeScreen(false);
+        }else if(!(choice.equalsIgnoreCase("1") || choice.equalsIgnoreCase("2"))
+                && !choice.isEmpty()) {
+            fundTransferSummary(origin, dest, amount, refNo);
+        }else {
+            welcomeScreen(false);
+        }
+    }
+
+    public static void fundTransferScreen(Account acc) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("=======Fund Transfer Screen=======");
+
+        System.out.print("Please enter destination account and press enter to continue or" +
+                "press enter to go back to Transaction: ");
+        String choiceDest = scanner.nextLine();
+        if (choiceDest.isEmpty()) {
+            transactionScreen(acc);
+        } else {
+            System.out.print("Please enter transfer amount and  press enter to continue or" +
+                    "  press enter to go back to Transaction: ");
+            String choiceAmount = scanner.nextLine();
+            if(choiceAmount.isEmpty()) {
+                transactionScreen(acc);
+            }else {
+                DataValidation validate = new DataValidation();
+                Map<String,Object> data = validate.checkFundInputData(choiceDest, choiceAmount, acc);
+                if(data.get("error") == null) {
+                    RandomNumberGenerator random = new RandomNumberGenerator();
+                    String refNum = random.getRandom6DigitNumber();
+                    System.out.println("Reference Number : "+refNum);
+                    System.out.println("Press enter to continue...");
+                    Scanner s = new Scanner(System.in);
+                    s.nextLine();
+
+                    System.out.println("Destination Account : "+choiceDest);
+                    System.out.println("Amount : $"+choiceAmount);
+                    System.out.println("Reference Number : "+refNum);
+
+                    System.out.println("1. Confirm Transfer");
+                    System.out.println("2. Cancel Transfer");
+
+                    System.out.print("Please choose option[2]: ");
+                    String choice = scanner.nextLine();
+                    if(choice.equalsIgnoreCase("1")) {
+                        processFundTransfer(acc, (Account) data.get("destinationAcc"),choiceAmount,refNum);
+                    }else if(choice.equalsIgnoreCase("2")){
+                        transactionScreen(acc);
+                    }else if(!(choice.equalsIgnoreCase("1") || choice.equalsIgnoreCase("2"))
+                            && !choice.isEmpty()) {
+                        fundTransferScreen(acc);
+                    }else {
+                        transactionScreen(acc);
+                    }
+
+                }else {
+                    System.out.println(data.get("error").toString());
+                    transactionScreen(acc);
+                }
+            }
+        }
     }
 
     public static void summaryScreen(Account acc, int withdraw) {

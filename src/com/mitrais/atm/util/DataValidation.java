@@ -13,9 +13,9 @@ public class DataValidation {
 
     public Map<String,Object> checkLoginCredential(String accNumber, String accPin) {
         Map<String,Object> result = new HashMap<>();
+
         UserData userData = new UserData();
         List<Account> accData = userData.getUserData();
-
         String errorMessage = null;
         boolean isLoggedIn = false;
         Account accountData = null;
@@ -39,10 +39,11 @@ public class DataValidation {
                     accountData = accData.get(i);
                     isLoggedIn = true;
                     break;
-                } else {
-                    errorMessage = "Invalid Account Number/PIN";
-                    result.put("accountData", accData.get(i));
                 }
+            }
+            if(!isLoggedIn) {
+                errorMessage = "Invalid Account Number/PIN";
+                result.put("accountData", accountData);
             }
         }
         result.put("isLoggedIn", isLoggedIn);
@@ -65,5 +66,46 @@ public class DataValidation {
             }
         }
         return errorMessage;
+    }
+
+    public Map<String,Object> checkFundInputData(String dest, String amount, Account acc) {
+        Map<String ,Object> result = new HashMap<>();
+        String error = null;
+        UserData userData = new UserData();
+        List<Account> alluser = userData.getUserData();
+        Account destAcc = new Account();
+        boolean isAccountExist = false;
+        for (int i = 0 ;i <alluser.size(); i++) {
+            String accno = alluser.get(i).getAccNumber();
+            if(!accno.equalsIgnoreCase(acc.getAccNumber()) && accno.equalsIgnoreCase(dest)) {
+                isAccountExist = true;
+                destAcc = alluser.get(i);
+                result.put("destinationAcc", destAcc);
+            }
+        }
+        if(!dest.matches("[0-9]+")) {
+            error = "Invalid account";
+        } else {
+            if(!isAccountExist) {
+                error = "Invalid account";
+            } else if(!amount.matches("[0-9]+")) {
+                error = "Invalid amount";
+            }else {
+                if(amount.length() > 10) {
+                    amount = amount.substring(1,10);
+                }
+                int amountNumb = Integer.valueOf(amount);
+                if(amountNumb > 1000) {
+                    error = "Maximum amount to withdraw is $1000";
+                }else if (amountNumb<1) {
+                    error = "Minimum amount to withdraw is $1";
+                }else if(amountNumb > acc.getBalance()) {
+                    error = "Insufficient balance $"+acc.getBalance();
+                }
+            }
+        }
+        result.put("error", error);
+
+        return result;
     }
 }
