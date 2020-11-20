@@ -1,6 +1,7 @@
 import com.mitrais.atm.model.Account;
 import com.mitrais.atm.util.DataValidation;
 
+import javax.xml.crypto.Data;
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
@@ -88,7 +89,7 @@ public class Main {
         }else if(choice.equalsIgnoreCase("3")){
             processWithdraw(account, 100);
         }else if(choice.equalsIgnoreCase("4")){
-            otherWithdrawScreen();
+            otherWithdrawScreen(account);
         }
         else if(choice.equalsIgnoreCase("5")){
             transactionScreen(account);
@@ -143,8 +144,18 @@ public class Main {
         }
     }
 
-    public static void otherWithdrawScreen() {
+    public static void otherWithdrawScreen(Account account) {
+        DataValidation validate = new DataValidation();
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Enter amount to withdraw : ");
+        System.out.print("Enter amount to withdraw : ");
+        String choice = scanner.nextLine();
+
+        String checkInput = validate.checkWithdrawAmount(choice);
+        if (checkInput == null) {
+            processWithdraw(account, Integer.valueOf(choice));
+        } else {
+            System.out.println(checkInput);
+            withdrawScreen(account);
+        }
     }
 }

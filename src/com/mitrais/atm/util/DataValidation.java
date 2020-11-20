@@ -50,4 +50,20 @@ public class DataValidation {
         result.put("accountData", accountData);
         return result;
     }
+
+    public String checkWithdrawAmount(String amount) {
+        String errorMessage = null;
+
+        if(!amount.matches("[0-9]+")){
+            errorMessage = "Invalid amount";
+        }else {
+            int amountNumb = Integer.valueOf(amount);
+            if(amountNumb > 1000) {
+                errorMessage = "Maximum amount to withdraw is $1000";
+            }else if (amountNumb%10 != 0) {
+                errorMessage = "Invalid amount";
+            }
+        }
+        return errorMessage;
+    }
 }
