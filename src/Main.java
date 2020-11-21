@@ -1,7 +1,6 @@
 import com.mitrais.atm.model.Account;
 import com.mitrais.atm.util.DataValidation;
 import com.mitrais.atm.util.RandomNumberGenerator;
-import com.mitrais.atm.util.UserData;
 
 import java.util.*;
 
