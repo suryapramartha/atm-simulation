@@ -108,7 +108,7 @@ public class Main {
         if (isSufficient) {
             summaryScreen(account, deduction);
         } else {
-            System.out.println("Insufficient balance $" + account.getBalance());
+            System.out.println("Insufficient balance $" + deduction);
             withdrawScreen(account);
         }
     }

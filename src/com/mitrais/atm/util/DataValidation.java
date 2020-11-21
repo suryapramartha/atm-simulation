@@ -100,7 +100,7 @@ public class DataValidation {
                 }else if (amountNumb<1) {
                     error = "Minimum amount to withdraw is $1";
                 }else if(amountNumb > acc.getBalance()) {
-                    error = "Insufficient balance $"+acc.getBalance();
+                    error = "Insufficient balance $"+amountNumb;
                 }
             }
         }
