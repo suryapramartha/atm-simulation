@@ -179,6 +179,6 @@ public class DataValidationTest {
         assertEquals(result.get("error").toString(), ERROR_INVALID_AMOUNT);
 
         result = validation.checkFundInputData(dest5, amount5, acc);
-        assertEquals(result.get("error").toString(),"Insufficient balance $"+acc.getBalance());
+        assertEquals(result.get("error").toString(),"Insufficient balance $"+amount5);
     }
 }
