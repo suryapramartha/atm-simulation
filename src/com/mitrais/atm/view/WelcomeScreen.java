@@ -22,8 +22,6 @@ public class WelcomeScreen implements Screen{
         System.out.println("=====Welcome to ATM Simulation v1=====");
 
         System.out.println("=============Please login=============");
-        System.out.println("acc num 112233 , pass 012108");
-
         System.out.print("Enter Account Number : ");
         String accNumber = scanner.nextLine();
         System.out.print("Enter PIN : ");

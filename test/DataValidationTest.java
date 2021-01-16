@@ -136,9 +136,9 @@ public class DataValidationTest {
         String amount = "20";
         Account acc = new Account("John Doe", "012108", 100, "112233");
 
-        result = validation.checkFundInputData(dest, amount, acc);
+        result = validation.checkFundInputData(dest, amount);
 
-        assertEquals(result.get("error"), null);
+        assertEquals(result.get("error"), "Insufficient balance $"+amount);
     }
 
     @Test
@@ -166,19 +166,19 @@ public class DataValidationTest {
 
         Account acc = new Account("John Doe", "012108", 100, "112233");
 
-        result = validation.checkFundInputData(dest1, amount1, acc);
+        result = validation.checkFundInputData(dest1, amount1);
         assertEquals(result.get("error").toString(), ERROR_INVALID_ACCOUNT);
 
-        result = validation.checkFundInputData(dest2, amount2, acc);
+        result = validation.checkFundInputData(dest2, amount2);
         assertEquals(result.get("error").toString(), ERROR_MAX_WITHDRAW_AMOUNT);
 
-        result = validation.checkFundInputData(dest3, amount3, acc);
+        result = validation.checkFundInputData(dest3, amount3);
         assertEquals(result.get("error").toString(), ERROR_MIN_WITHDRAW_AMOUNT);
 
-        result = validation.checkFundInputData(dest4, amount4, acc);
+        result = validation.checkFundInputData(dest4, amount4);
         assertEquals(result.get("error").toString(), ERROR_INVALID_AMOUNT);
 
-        result = validation.checkFundInputData(dest5, amount5, acc);
+        result = validation.checkFundInputData(dest5, amount5);
         assertEquals(result.get("error").toString(),"Insufficient balance $"+amount5);
     }
 }
