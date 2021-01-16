@@ -68,7 +68,7 @@ public class DataValidation {
         return errorMessage;
     }
 
-    public Map<String,Object> checkFundInputData(String dest, String amount, Account acc) {
+    public Map<String,Object> checkFundInputData(String dest, String amount) {
         Map<String ,Object> result = new HashMap<>();
         String error = null;
         UserData userData = new UserData();
@@ -77,7 +77,7 @@ public class DataValidation {
         boolean isAccountExist = false;
         for (int i = 0 ;i <alluser.size(); i++) {
             String accno = alluser.get(i).getAccNumber();
-            if(!accno.equalsIgnoreCase(acc.getAccNumber()) && accno.equalsIgnoreCase(dest)) {
+            if(!accno.equalsIgnoreCase(UserData.loggedAccount.getAccNumber()) && accno.equalsIgnoreCase(dest)) {
                 isAccountExist = true;
                 destAcc = alluser.get(i);
                 result.put("destinationAcc", destAcc);
@@ -99,7 +99,7 @@ public class DataValidation {
                     error = "Maximum amount to withdraw is $1000";
                 }else if (amountNumb<1) {
                     error = "Minimum amount to withdraw is $1";
-                }else if(amountNumb > acc.getBalance()) {
+                }else if(amountNumb > UserData.loggedAccount.getBalance()) {
                     error = "Insufficient balance $"+amountNumb;
                 }
             }

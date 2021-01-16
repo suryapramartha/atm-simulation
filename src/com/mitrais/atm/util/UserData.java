@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UserData {
+    public static Account loggedAccount = new Account();
 
     List<Account> userData = new ArrayList<>();
 
