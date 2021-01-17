@@ -1,8 +1,5 @@
 package com.mitrais.atm.model;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class Account {
     private String name;
     private String pin;

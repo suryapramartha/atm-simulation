@@ -11,6 +11,19 @@ public class DataValidation {
 
     public DataValidation() {}
 
+    public String checkAccountNumberCredential(String accNumber) {
+
+        String errorMessage = null;
+
+        //start validate
+        if(accNumber.length() != 6){
+            errorMessage = "Account Number should have 6 digits length";
+        }
+        else if(!accNumber.matches("[0-9]+")){
+            errorMessage = "Account Number should only contains numbers";
+        }
+        return errorMessage;
+    }
     public Map<String,Object> checkLoginCredential(String accNumber, String accPin) {
         Map<String,Object> result = new HashMap<>();
 

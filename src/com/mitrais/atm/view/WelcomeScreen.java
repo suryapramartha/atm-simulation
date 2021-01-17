@@ -24,16 +24,21 @@ public class WelcomeScreen implements Screen{
         System.out.println("=============Please login=============");
         System.out.print("Enter Account Number : ");
         String accNumber = scanner.nextLine();
-        System.out.print("Enter PIN : ");
-        String accPin = scanner.nextLine();
-        res = validation.checkLoginCredential(accNumber, accPin);
-        Boolean loggedIn = (Boolean) res.get("isLoggedIn");
-        if (res.get("errorMessage") != null) {
-            errorMessage = res.get("errorMessage").toString();
-            System.out.println("Error : " + errorMessage);
+        String checkAccNumber = validation.checkAccountNumberCredential(accNumber);
+
+        if (checkAccNumber != null) {
+            System.out.println("Error : " + checkAccNumber);
         } else {
-            UserData.loggedAccount = (Account) res.get("accountData");
-            transactionScreen.showScreen();
+            System.out.print("Enter PIN : ");
+            String accPin = scanner.nextLine();
+            res = validation.checkLoginCredential(accNumber, accPin);
+            if(res.get("errorMessage") != null) {
+                errorMessage = res.get("errorMessage").toString();
+                System.out.println("Error : "+ errorMessage);
+            } else {
+                UserData.loggedAccount = (Account) res.get("accountData");
+                transactionScreen.showScreen();
+            }
         }
     }
 }
