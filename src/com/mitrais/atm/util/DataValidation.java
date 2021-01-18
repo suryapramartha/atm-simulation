@@ -1,68 +1,53 @@
 package com.mitrais.atm.util;
 
 import com.mitrais.atm.model.Account;
+import com.mitrais.atm.view.TransactionScreen;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
+import java.util.function.Predicate;
 
 public class DataValidation {
 
-
     public DataValidation() {}
 
-    public String checkAccountNumberCredential(String accNumber) {
-
-        String errorMessage = null;
-
-        //start validate
+    public boolean checkAccountNumberCredential(String accNumber) {
+        boolean isValid = true;
         if(accNumber.length() != 6){
-            errorMessage = "Account Number should have 6 digits length";
+            System.out.println("Account Number should have 6 digits length");
+            isValid = false;
         }
         else if(!accNumber.matches("[0-9]+")){
-            errorMessage = "Account Number should only contains numbers";
+            System.out.println("Account Number should only contains numbers");
+            isValid = false;
         }
-        return errorMessage;
+        return isValid;
     }
-    public Map<String,Object> checkLoginCredential(String accNumber, String accPin) {
-        Map<String,Object> result = new HashMap<>();
-
-        UserData userData = new UserData();
-        List<Account> accData = userData.getUserData();
-        String errorMessage = null;
-        boolean isLoggedIn = false;
-        Account accountData = null;
-
-        //start validate
-        if(accNumber.length() != 6){
-            errorMessage = "Account Number should have 6 digits length";
-        }
-        else if(!accNumber.matches("[0-9]+")){
-            errorMessage = "Account Number should only contains numbers";
-        }
-        else if(accPin.length() != 6){
-            errorMessage = "PIN should have 6 digits length";
+    public boolean checkPIN(String accPin) {
+        boolean isValid = true;
+        if(accPin.length() != 6){
+            System.out.println("PIN should have 6 digits length");
+            isValid = false;
         }
         else if(!accPin.matches("[0-9]+")){
-            errorMessage = "PIN should only contains numbers";
-        }else {
-            for(int i=0; i< accData.size(); i++){
-                if(accNumber.equalsIgnoreCase(accData.get(i).getAccNumber()) &&
-                        accPin.equalsIgnoreCase(accData.get(i).getPin())){
-                    accountData = accData.get(i);
-                    isLoggedIn = true;
-                    break;
-                }
-            }
-            if(!isLoggedIn) {
-                errorMessage = "Invalid Account Number/PIN";
-                result.put("accountData", accountData);
-            }
+            System.out.println("PIN should only contains numbers");
+            isValid = false;
         }
-        result.put("isLoggedIn", isLoggedIn);
-        result.put("errorMessage", errorMessage);
-        result.put("accountData", accountData);
-        return result;
+        return isValid;
+    }
+
+    public Account checkLoginCredential(String accNumber, String accPin, List<Account> accounts) {
+        Account account = null;
+        Predicate<Account> filterAccount = p ->
+                p.getAccNumber().equalsIgnoreCase(accNumber) && p.getPin().equalsIgnoreCase(accPin);
+        Optional<Account> result = accounts.stream().filter(filterAccount).findFirst();
+
+        if(result.isPresent()) {
+            account = result.get();
+        }else {
+            System.out.println("Invalid Account Number/PIN");
+        }
+        return account;
     }
 
     public String checkWithdrawAmount(String amount) {
@@ -81,44 +66,50 @@ public class DataValidation {
         return errorMessage;
     }
 
-    public Map<String,Object> checkFundInputData(String dest, String amount) {
-        Map<String ,Object> result = new HashMap<>();
-        String error = null;
-        UserData userData = new UserData();
-        List<Account> alluser = userData.getUserData();
-        Account destAcc = new Account();
+    public Account checkFundInputData(String dest, String amount, Account loggedAccount ,List<Account> accounts) {
+        Account account = null;
         boolean isAccountExist = false;
-        for (int i = 0 ;i <alluser.size(); i++) {
-            String accno = alluser.get(i).getAccNumber();
-            if(!accno.equalsIgnoreCase(UserData.loggedAccount.getAccNumber()) && accno.equalsIgnoreCase(dest)) {
-                isAccountExist = true;
-                destAcc = alluser.get(i);
-                result.put("destinationAcc", destAcc);
-            }
+        boolean isError = false;
+
+        Predicate<Account> filterAccount = p ->
+                !p.getAccNumber().equalsIgnoreCase(loggedAccount.getAccNumber()) && p.getAccNumber().equalsIgnoreCase(dest);
+        Optional<Account> result = accounts.stream().filter(filterAccount).findFirst();
+        if(result.isPresent()) {
+            isAccountExist = true;
+            account = result.get();
         }
+
         if(!dest.matches("[0-9]+")) {
-            error = "Invalid account";
+            System.out.println("Invalid account");
+            isError = true;
         } else {
             if(!isAccountExist) {
-                error = "Invalid account";
+                System.out.println("Invalid account");
+                isError = true;
             } else if(!amount.matches("[0-9]+")) {
-                error = "Invalid amount";
+                System.out.println("Invalid amount");
+                isError = true;
             }else {
                 if(amount.length() > 10) {
                     amount = amount.substring(1,10);
                 }
                 int amountNumb = Integer.valueOf(amount);
                 if(amountNumb > 1000) {
-                    error = "Maximum amount to withdraw is $1000";
+                    System.out.println("Maximum amount to withdraw is $1000");
+                    isError = true;
                 }else if (amountNumb<1) {
-                    error = "Minimum amount to withdraw is $1";
-                }else if(amountNumb > UserData.loggedAccount.getBalance()) {
-                    error = "Insufficient balance $"+amountNumb;
+                    System.out.println("Minimum amount to withdraw is $1");
+                    isError = true;
+                }else if(amountNumb > loggedAccount.getBalance()) {
+                    System.out.println("Insufficient balance $"+amountNumb);
+                    isError = true;
                 }
             }
         }
-        result.put("error", error);
-
-        return result;
+        if(isError) {
+            TransactionScreen transactionScreen = new TransactionScreen(loggedAccount, accounts);
+            transactionScreen.showScreen();
+        }
+        return account;
     }
 }
