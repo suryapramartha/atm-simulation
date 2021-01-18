@@ -4,23 +4,28 @@ import com.mitrais.atm.model.Account;
 import com.mitrais.atm.service.TransactionService;
 import com.mitrais.atm.util.DataValidation;
 import com.mitrais.atm.util.RandomNumberGenerator;
-import com.mitrais.atm.util.UserData;
 
-import java.util.Map;
+import java.util.List;
 import java.util.Scanner;
 
 public class FundTransferScreen implements Screen{
+    Account account = null;
+    List<Account> accounts = null;
     TransactionService transactionService = new TransactionService();
 
+    public FundTransferScreen(Account account, List<Account> accounts) {
+        this.account = account;
+        this.accounts = accounts;
+    }
     @Override
     public void showScreen() {
-        TransactionScreen transactionScreen = new TransactionScreen();
+        TransactionScreen transactionScreen = new TransactionScreen(account, accounts);
         Scanner scanner = new Scanner(System.in);
         System.out.println("=======Fund Transfer Screen=======");
-
         System.out.print("Please enter destination account and press enter to continue or" +
                 "press enter to go back to Transaction: ");
         String choiceDest = scanner.nextLine();
+
         if (choiceDest.isEmpty()) {
             transactionScreen.showScreen();
         } else {
@@ -31,8 +36,8 @@ public class FundTransferScreen implements Screen{
                 transactionScreen.showScreen();
             }else {
                 DataValidation validate = new DataValidation();
-                Map<String,Object> data = validate.checkFundInputData(choiceDest, choiceAmount);
-                if(data.get("error") == null) {
+                Account destAcc = validate.checkFundInputData(choiceDest, choiceAmount, account, accounts);
+                if(destAcc != null) {
                     RandomNumberGenerator random = new RandomNumberGenerator();
                     String refNum = random.getRandom6DigitNumber();
                     System.out.println("Reference Number : "+refNum);
@@ -50,7 +55,7 @@ public class FundTransferScreen implements Screen{
                     System.out.print("Please choose option[2]: ");
                     String choice = scanner.nextLine();
                     if(choice.equalsIgnoreCase("1")) {
-                        transactionService.processFundTransfer(UserData.loggedAccount, (Account) data.get("destinationAcc"),choiceAmount,refNum);
+                        transactionService.processFundTransfer(account, destAcc,choiceAmount,refNum, accounts);
                     }else if(choice.equalsIgnoreCase("2")){
                         transactionScreen.showScreen();
                     }else if(!(choice.equalsIgnoreCase("1") || choice.equalsIgnoreCase("2"))
@@ -61,7 +66,6 @@ public class FundTransferScreen implements Screen{
                     }
 
                 }else {
-                    System.out.println(data.get("error").toString());
                     transactionScreen.showScreen();
                 }
             }

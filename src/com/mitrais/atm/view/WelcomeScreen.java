@@ -2,42 +2,40 @@ package com.mitrais.atm.view;
 
 import com.mitrais.atm.model.Account;
 import com.mitrais.atm.util.DataValidation;
-import com.mitrais.atm.util.UserData;
 
-import java.util.Map;
+import java.util.List;
 import java.util.Scanner;
 
 public class WelcomeScreen implements Screen{
 
+    List<Account> accounts = null;
     Scanner scanner = new Scanner(System.in);
 
     DataValidation validation = new DataValidation();
-    TransactionScreen transactionScreen = new TransactionScreen();
+
+    public WelcomeScreen(List<Account> accounts) {
+        this.accounts = accounts;
+    }
 
     @Override
     public void showScreen() {
-        String errorMessage = null;
-        Map<String, Object> res;
         System.out.println("======================================");
         System.out.println("=====Welcome to ATM Simulation v1=====");
-
         System.out.println("=============Please login=============");
         System.out.print("Enter Account Number : ");
         String accNumber = scanner.nextLine();
-        String checkAccNumber = validation.checkAccountNumberCredential(accNumber);
+        boolean isAccNumberValid = validation.checkAccountNumberCredential(accNumber);
 
-        if (checkAccNumber != null) {
-            System.out.println("Error : " + checkAccNumber);
-        } else {
+        if (isAccNumberValid) {
             System.out.print("Enter PIN : ");
             String accPin = scanner.nextLine();
-            res = validation.checkLoginCredential(accNumber, accPin);
-            if(res.get("errorMessage") != null) {
-                errorMessage = res.get("errorMessage").toString();
-                System.out.println("Error : "+ errorMessage);
-            } else {
-                UserData.loggedAccount = (Account) res.get("accountData");
-                transactionScreen.showScreen();
+            boolean isPinValid = validation.checkPIN(accPin);
+            if (isPinValid) {
+                Account account = validation.checkLoginCredential(accNumber, accPin, accounts);
+                if(account != null) {
+                    TransactionScreen transactionScreen = new TransactionScreen(account,accounts);
+                    transactionScreen.showScreen();
+                }
             }
         }
     }

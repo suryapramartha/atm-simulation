@@ -1,8 +1,19 @@
 package com.mitrais.atm.view;
 
+import com.mitrais.atm.model.Account;
+
+import java.util.List;
 import java.util.Scanner;
 
 public class TransactionScreen implements Screen{
+
+    Account account = null;
+    List<Account> accounts = null;
+
+    public TransactionScreen(Account account, List<Account> accounts) {
+        this.accounts = accounts;
+        this.account = account;
+    }
 
     @Override
     public void showScreen() {
@@ -15,20 +26,14 @@ public class TransactionScreen implements Screen{
         String choice = scanner.nextLine();
 
         if(choice.equalsIgnoreCase("1")) {
-            WithdrawScreen withdrawScreen = new WithdrawScreen();
+            WithdrawScreen withdrawScreen = new WithdrawScreen(account, accounts);
             withdrawScreen.showScreen();
         }else if(choice.equalsIgnoreCase("2")){
-            FundTransferScreen fundTransferScreen = new FundTransferScreen();
+            FundTransferScreen fundTransferScreen = new FundTransferScreen(account, accounts);
             fundTransferScreen.showScreen();
-        }else if(choice.equalsIgnoreCase("3")){
-            WelcomeScreen welcomeScreen = new WelcomeScreen();
-            welcomeScreen.showScreen();
-        }else if(!(choice.equalsIgnoreCase("1") || choice.equalsIgnoreCase("2") ||
-                choice.equalsIgnoreCase("3")) && !choice.isEmpty()) {
+        }else if(!(choice.equalsIgnoreCase("1") || choice.equalsIgnoreCase("2")
+                || choice.equalsIgnoreCase("3")) && !choice.isEmpty()) {
                 this.showScreen();
-        }else {
-            WelcomeScreen welcomeScreen = new WelcomeScreen();
-            welcomeScreen.showScreen();
         }
     }
 }
