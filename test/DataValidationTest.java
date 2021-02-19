@@ -4,9 +4,7 @@ import com.mitrais.atm.util.UserData;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 
@@ -21,7 +19,7 @@ public class DataValidationTest {
     Account accountData;
     List<Account> accounts;
 
-    Map<String,Object> result;
+    Account result;
     UserData userData;
 
     @Before
@@ -30,40 +28,20 @@ public class DataValidationTest {
         isLoggedIn = false;
         accountData = null;
 
-        result = new HashMap<>();
+        result = null;
+        UserData userData = new UserData();
+        List<Account> accounts =  userData.getUserData();
     }
 
-    @Test
-    public void checkLoginCredentialDidSuccess() {
-        DataValidation datavalidation = new DataValidation();
-        String accNumber = "112233";
-        String pin = "012108";
-
-        result = datavalidation.checkLoginCredential(accNumber, pin);
-        assertEquals(true, result.get("isLoggedIn"));
-        assertEquals(null, result.get("errorMessage"));
-    }
 
     @Test
-    public void checkLoginCredentialErrorLengthAccNumber() {
-        DataValidation datavalidation = new DataValidation();
-        String accNumber = "112233f";
-        String pin = "012108";
-
-        result = datavalidation.checkLoginCredential(accNumber, pin);
-        assertEquals(false, result.get("isLoggedIn"));
-        assertEquals("Account Number should have 6 digits length", result.get("errorMessage"));
-    }
-
-    @Test
-    public void checkLoginCredentialErrorNumberOnlyAccNumber() {
+    public void checkAccountNumberCredentialErrorNumberOnlyAccNumber() {
         DataValidation datavalidation = new DataValidation();
         String accNumber = "11223f";
         String pin = "012108";
 
-        result = datavalidation.checkLoginCredential(accNumber, pin);
-        assertEquals(false, result.get("isLoggedIn"));
-        assertEquals("Account Number should only contains numbers", result.get("errorMessage"));
+        boolean isError = datavalidation.checkAccountNumberCredential(accNumber);
+        assertEquals(false, isError);
     }
 
     @Test
@@ -72,31 +50,8 @@ public class DataValidationTest {
         String accNumber = "112233";
         String pin = "0121084";
 
-        result = datavalidation.checkLoginCredential(accNumber, pin);
-        assertEquals(false, result.get("isLoggedIn"));
-        assertEquals("PIN should have 6 digits length", result.get("errorMessage"));
-    }
-
-    @Test
-    public void checkLoginCredentialErrorNumberOnlyPIN() {
-        DataValidation datavalidation = new DataValidation();
-        String accNumber = "112233";
-        String pin = "01210b";
-
-        result = datavalidation.checkLoginCredential(accNumber, pin);
-        assertEquals(false, result.get("isLoggedIn"));
-        assertEquals("PIN should only contains numbers", result.get("errorMessage"));
-    }
-
-    @Test
-    public void checkLoginCredentialErrorAccOrPIN() {
-        DataValidation datavalidation = new DataValidation();
-        String accNumber = "112232";
-        String pin = "012101";
-
-        result = datavalidation.checkLoginCredential(accNumber, pin);
-        assertEquals(false, result.get("isLoggedIn"));
-        assertEquals("Invalid Account Number/PIN", result.get("errorMessage"));
+        boolean isEror = datavalidation.checkPIN(pin);
+        assertEquals(false, isEror);
     }
 
     @Test
@@ -128,56 +83,17 @@ public class DataValidationTest {
         assertEquals(result, "Maximum amount to withdraw is $1000");
     }
 
-    @Test
-    public void checkFundInputDataIsValid() {
-        DataValidation validation = new DataValidation();
-        String dest = "112244";
-        String amount = "20";
-        Account acc = new Account("John Doe", "012108", 100, "112233");
-
-        result = validation.checkFundInputData(dest, amount);
-
-        assertEquals(result.get("error"), "Insufficient balance $"+amount);
-    }
-
-    @Test
-        public void checkFundInputDataInvalid() {
-        DataValidation validation = new DataValidation();
-        //test account destination number only
-        String dest1 = "1664bgd";
-        String amount1 = "20";
-
-        //test max amount to transfer
-        String dest2 = "112244";
-        String amount2 = "2000000000";
-
-        //test min amount to transfer
-        String dest3 = "112244";
-        String amount3 = "0";
-
-        //test amount number only
-        String dest4 = "112244";
-        String amount4 = "yegf";
-
-        //test insufficient balance
-        String dest5 = "112244";
-        String amount5 = "1000";
-
-        Account acc = new Account("John Doe", "012108", 100, "112233");
-
-        result = validation.checkFundInputData(dest1, amount1);
-        assertEquals(result.get("error").toString(), ERROR_INVALID_ACCOUNT);
-
-        result = validation.checkFundInputData(dest2, amount2);
-        assertEquals(result.get("error").toString(), ERROR_MAX_WITHDRAW_AMOUNT);
-
-        result = validation.checkFundInputData(dest3, amount3);
-        assertEquals(result.get("error").toString(), ERROR_MIN_WITHDRAW_AMOUNT);
-
-        result = validation.checkFundInputData(dest4, amount4);
-        assertEquals(result.get("error").toString(), ERROR_INVALID_AMOUNT);
-
-        result = validation.checkFundInputData(dest5, amount5);
-        assertEquals(result.get("error").toString(),"Insufficient balance $"+amount5);
-    }
+//    @Test
+//        public void checkFundInputDataInvalid() {
+//        DataValidation validation = new DataValidation();
+//
+//        //test account destination number only
+//        String dest1 = "1664bgd";
+//        String amount1 = "20";
+//
+//        Account acc = new Account("John Doe", "012108", 100, "112233");
+//
+//        result = validation.checkFundInputData(dest1, amount1, acc, accounts);
+//        assertEquals(result, null);
+//    }
 }

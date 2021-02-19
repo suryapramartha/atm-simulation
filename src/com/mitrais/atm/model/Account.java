@@ -46,4 +46,14 @@ public class Account {
     public void setAccNumber(String accNumber) {
         this.accNumber = accNumber;
     }
+
+    @Override
+    public String toString() {
+        return "Account{" +
+                "name='" + name + '\'' +
+                ", pin='" + pin + '\'' +
+                ", balance=" + balance +
+                ", accNumber='" + accNumber + '\'' +
+                '}';
+    }
 }
