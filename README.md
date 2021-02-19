@@ -1,4 +1,4 @@
-# ATM-Simulation
+# ATM Simulation app
 
 ## To run the project :
 
@@ -14,11 +14,12 @@
 
 2. From the JAR directory, Run it with the command `java -jar {jar_name}.jar`
 
-## ATM-Simulation 1
-
-- Withdraw feature
-- Fund Transfer feature
 
 ## ATM-Simulation 2
 
 - Add capability to read User Data from CSV file
+
+## ATM-Simulation 1
+
+- Withdraw feature
+- Fund Transfer feature
