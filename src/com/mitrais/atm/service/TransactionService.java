@@ -10,13 +10,16 @@ import java.util.List;
 
 public class TransactionService {
 
+    private static final String WITHDRAW = "0";
+    private static final String FUND_TRANSFER = "1";
+
     UserData userData = new UserData();
 
     public void processWithdraw(int deduction, Account loggedAccount, List<Account> accounts)  {
         int balance = loggedAccount.getBalance();
         if(balance >= deduction) {
             loggedAccount.setBalance(balance - deduction);
-            userData.updateCSVonWithdraw(loggedAccount);
+            userData.updateCSVOnTransaction(loggedAccount, null, WITHDRAW);
             SummaryScreen summaryScreen = new SummaryScreen(deduction, loggedAccount,accounts);
             summaryScreen.showScreen();
         }else {
@@ -28,6 +31,7 @@ public class TransactionService {
     public void processFundTransfer(Account origin, Account dest, String amount, String refNo, List<Account> accounts) {
         origin.setBalance(origin.getBalance() - Integer.parseInt(amount));
         dest.setBalance(dest.getBalance() + Integer.parseInt(amount));
+        userData.updateCSVOnTransaction(origin, dest, FUND_TRANSFER);
         FundTransferSummaryScreen fundTransferSummaryScreen = new FundTransferSummaryScreen(origin,dest, amount, refNo, accounts);
         fundTransferSummaryScreen.showScreen();
     }

@@ -14,6 +14,8 @@ public class UserData {
     private static final String FILE_INPUT_PATH = "ATM-accounts.csv";
     private static final String CSV_SEPARATOR = ",";
     private static final String FILE_TEMP_PATH = "temp.csv";
+    private static final String WITHDRAW = "0";
+    private static final String FUND_TRANSFER = "1";
     public UserData() { }
 
     public List<Account> getUserData() {
@@ -26,27 +28,13 @@ public class UserData {
     }
 
     public List<Account> getUserDataFromCSV() throws IOException {
-        List<Account> result = new ArrayList<>();
-        BufferedReader bufferedReader = null;
-        try {
-            File inputFile = new File(FILE_INPUT_PATH);
-            InputStream inputStream = new FileInputStream(inputFile);
-            bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-
-            result = bufferedReader
-                    .lines()
-                    .skip(1) // skip header on CSV
-                    .map(mapToAccount)
-                    .collect(Collectors.toList());
-
-            boolean isNotValid = validateCSVData(result);
-            if(isNotValid)
-                result = null;
-        }catch (FileNotFoundException e){
-            e.printStackTrace();
-        }finally {
-            bufferedReader.close();
-        }
+        List<List<String>> loadCSV = loadCSVFile();
+        List<Account> result = loadCSV.stream()
+                .map(mapToAccount)
+                .collect(Collectors.toList());
+        boolean isNotValid = validateCSVData(result);
+        if(isNotValid)
+            result = null;
         return result;
     }
 
@@ -63,7 +51,6 @@ public class UserData {
                     .skip(1)
                     .map(p -> Arrays.asList(p.split(CSV_SEPARATOR)))
                     .collect(Collectors.toList());
-
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } finally {
@@ -72,13 +59,12 @@ public class UserData {
         return data;
     };
 
-    private Function<String, Account> mapToAccount = line -> {
-      String[] p = line.split(CSV_SEPARATOR);
+    private Function<List<String>, Account> mapToAccount = line -> {
       Account account = new Account();
-      account.setName(p[0]);
-      account.setPin(p[1]);
-      account.setBalance(Integer.valueOf(p[2]));
-      account.setAccNumber(p[3]);
+      account.setName(line.get(0));
+      account.setPin(line.get(1));
+      account.setBalance(Integer.valueOf(line.get(2)));
+      account.setAccNumber(line.get(3));
       return account;
     };
 
@@ -92,35 +78,39 @@ public class UserData {
         return isNotValid;
     };
 
-
-
-    public void updateCSVonWithdraw(Account account) {
+    public void updateCSVOnTransaction(Account origin, Account dest, String command) {
         try {
             File oldFile = new File(FILE_INPUT_PATH);
             File newFile = new File(FILE_TEMP_PATH);
             List<List<String>> inputData = loadCSVFile();
-
-            FileWriter csvWriter = new FileWriter(FILE_TEMP_PATH);
-            csvWriter.append("Name");
-            csvWriter.append(",");
-            csvWriter.append("PIN");
-            csvWriter.append(",");
-            csvWriter.append("Balance");
-            csvWriter.append(",");
-            csvWriter.append("Account Number");
-            csvWriter.append("\n");
-
-            inputData.stream().forEach(p -> {
-                try {
-                    if (p.get(3).equalsIgnoreCase(account.getAccNumber())) {
-                        p.set(2, String.valueOf(account.getBalance()));
+            FileWriter csvWriter = generateCSVTemplate();
+            if (command.equals(WITHDRAW)) {
+                inputData.stream().forEach(p -> {
+                    try {
+                        if (p.get(3).equalsIgnoreCase(origin.getAccNumber())) {
+                            p.set(2, String.valueOf(origin.getBalance()));
+                        }
+                        csvWriter.append(String.join(CSV_SEPARATOR, p));
+                        csvWriter.append("\n");
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
-                    csvWriter.append(String.join(CSV_SEPARATOR, p));
-                    csvWriter.append("\n");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            });
+                });
+            }
+            if (command.equals(FUND_TRANSFER)) {
+                inputData.stream().forEach(p -> {
+                    try {
+                        if (p.get(3).equalsIgnoreCase(origin.getAccNumber()))
+                            p.set(2, String.valueOf(origin.getBalance()));
+                        if (p.get(3).equalsIgnoreCase(dest.getAccNumber()))
+                            p.set(2, String.valueOf(dest.getBalance()));
+                        csvWriter.append(String.join(CSV_SEPARATOR, p));
+                        csvWriter.append("\n");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
+            }
             csvWriter.flush();
             csvWriter.close();
             oldFile.delete();
@@ -129,6 +119,20 @@ public class UserData {
         catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private FileWriter generateCSVTemplate() throws IOException {
+        FileWriter csvWriter = new FileWriter(FILE_TEMP_PATH);
+        csvWriter.append("Name");
+        csvWriter.append(",");
+        csvWriter.append("PIN");
+        csvWriter.append(",");
+        csvWriter.append("Balance");
+        csvWriter.append(",");
+        csvWriter.append("Account Number");
+        csvWriter.append("\n");
+
+        return csvWriter;
     }
 
 }
