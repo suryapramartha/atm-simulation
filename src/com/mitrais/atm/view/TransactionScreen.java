@@ -21,8 +21,9 @@ public class TransactionScreen implements Screen{
         System.out.println("=====Transaction Screen=====");
         System.out.println("1. Withdraw");
         System.out.println("2. Fund Transfer");
-        System.out.println("3. Exit");
-        System.out.print("Please choose option[3]: ");
+        System.out.println("3. Transaction History");
+        System.out.println("4. Exit");
+        System.out.print("Please choose option[4]: ");
         String choice = scanner.nextLine();
 
         if(choice.equalsIgnoreCase("1")) {
@@ -31,8 +32,11 @@ public class TransactionScreen implements Screen{
         }else if(choice.equalsIgnoreCase("2")){
             FundTransferScreen fundTransferScreen = new FundTransferScreen(account, accounts);
             fundTransferScreen.showScreen();
+        }else if(choice.equalsIgnoreCase("3")){
+            TransactionHistoryScreen transactionHistoryScreen = new TransactionHistoryScreen(account, accounts);
+            transactionHistoryScreen.showScreen();
         }else if(!(choice.equalsIgnoreCase("1") || choice.equalsIgnoreCase("2")
-                || choice.equalsIgnoreCase("3")) && !choice.isEmpty()) {
+                || choice.equalsIgnoreCase("3")|| choice.equalsIgnoreCase("4")) && !choice.isEmpty()) {
                 this.showScreen();
         }
     }

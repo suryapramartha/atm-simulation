@@ -5,6 +5,7 @@ import com.mitrais.atm.model.Account;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -12,10 +13,12 @@ import java.util.stream.Collectors;
 public class UserData {
 
     private static final String FILE_INPUT_PATH = "ATM-accounts.csv";
+    private static final String FILE_HISTORY_PATH = "ATM-accounts-history.csv";
     private static final String CSV_SEPARATOR = ",";
     private static final String FILE_TEMP_PATH = "temp.csv";
-    private static final String WITHDRAW = "0";
-    private static final String FUND_TRANSFER = "1";
+    private static final String WITHDRAW = "WITHDRAW";
+    private static final String FUND_TRANSFER = "FUND TRANSFER";
+    private static final String FUND_TRANSFER_RECEIVED = "TRANSFER RECEIVED";
     public UserData() { }
 
     public List<Account> getUserData() {
@@ -28,7 +31,7 @@ public class UserData {
     }
 
     public List<Account> getUserDataFromCSV() throws IOException {
-        List<List<String>> loadCSV = loadCSVFile();
+        List<List<String>> loadCSV = loadCSVFile(FILE_INPUT_PATH);
         List<Account> result = loadCSV.stream()
                 .map(mapToAccount)
                 .collect(Collectors.toList());
@@ -38,11 +41,11 @@ public class UserData {
         return result;
     }
 
-    public List<List<String>> loadCSVFile() throws IOException {
+    public List<List<String>> loadCSVFile(String filepath) throws IOException {
         List<List<String>> data = new ArrayList<>();
         BufferedReader bufferedReader = null;
         try {
-            File file = new File(FILE_INPUT_PATH);
+            File file = new File(filepath);
             InputStream inputStream = new FileInputStream(file);
             bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
 
@@ -78,11 +81,11 @@ public class UserData {
         return isNotValid;
     };
 
-    public void updateCSVOnTransaction(Account origin, Account dest, String command) {
+    public void updateCSVOnTransaction(Account origin, Account dest, String command, String amount) {
         try {
             File oldFile = new File(FILE_INPUT_PATH);
             File newFile = new File(FILE_TEMP_PATH);
-            List<List<String>> inputData = loadCSVFile();
+            List<List<String>> inputData = loadCSVFile(FILE_INPUT_PATH);
             FileWriter csvWriter = generateCSVTemplate();
             if (command.equals(WITHDRAW)) {
                 inputData.stream().forEach(p -> {
@@ -115,10 +118,61 @@ public class UserData {
             csvWriter.close();
             oldFile.delete();
             newFile.renameTo(oldFile);
+
+            saveToHistory(origin, dest, command, amount);
         }
         catch (IOException e) {
             e.printStackTrace();
         }
+    }
+    public List<List<String>> getTransactionHistory(String accountNumber)  {
+        List<List<String>> inputData = null;
+        try {
+            inputData = loadCSVFile(FILE_HISTORY_PATH);    
+        }catch (IOException e) {
+            e.printStackTrace();
+        }
+        return inputData.stream()
+                .filter(c -> c.get(0).equalsIgnoreCase(accountNumber))
+                .limit(10)
+                .collect(Collectors.toList());
+    }
+
+    private void saveToHistory(Account origin, Account dest, String command, String amount) throws IOException {
+        File oldFile = new File(FILE_HISTORY_PATH);
+        File newFile = new File(FILE_TEMP_PATH);
+        List<List<String>> inputData = loadCSVFile(FILE_HISTORY_PATH);
+        FileWriter csvWriter = generateCSVHistoryTemplate();
+        inputData.stream().forEach(p -> {
+            try {
+                csvWriter.append(String.join(CSV_SEPARATOR, p));
+                csvWriter.append("\n");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+        List<String> newInput = new ArrayList<>();
+        newInput.add(0, origin.getAccNumber());
+        newInput.add(1, String.valueOf(new Date()));
+        newInput.add(2, command);
+        newInput.add(3,amount);
+        newInput.add(4, String.valueOf(origin.getBalance()));
+        csvWriter.append(String.join(CSV_SEPARATOR, newInput));
+        csvWriter.append("\n");
+        if (command.equals(FUND_TRANSFER)) {
+            List<String> newInputReceiver = new ArrayList<>();
+            newInputReceiver.add(0, dest.getAccNumber());
+            newInputReceiver.add(1, String.valueOf(new Date()));
+            newInputReceiver.add(2, FUND_TRANSFER_RECEIVED);
+            newInputReceiver.add(3,amount);
+            newInputReceiver.add(4, String.valueOf(dest.getBalance()));
+            csvWriter.append(String.join(CSV_SEPARATOR, newInputReceiver));
+            csvWriter.append("\n");
+        }
+        csvWriter.flush();
+        csvWriter.close();
+        oldFile.delete();
+        newFile.renameTo(oldFile);
     }
 
     private FileWriter generateCSVTemplate() throws IOException {
@@ -130,6 +184,22 @@ public class UserData {
         csvWriter.append("Balance");
         csvWriter.append(",");
         csvWriter.append("Account Number");
+        csvWriter.append("\n");
+
+        return csvWriter;
+    }
+
+    private FileWriter generateCSVHistoryTemplate() throws IOException {
+        FileWriter csvWriter = new FileWriter(FILE_TEMP_PATH);
+        csvWriter.append("Account Number");
+        csvWriter.append(",");
+        csvWriter.append("Date");
+        csvWriter.append(",");
+        csvWriter.append("Transaction Type");
+        csvWriter.append(",");
+        csvWriter.append("Amount");
+        csvWriter.append(",");
+        csvWriter.append("Balance");
         csvWriter.append("\n");
 
         return csvWriter;
