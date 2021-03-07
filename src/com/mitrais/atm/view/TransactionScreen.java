@@ -26,17 +26,20 @@ public class TransactionScreen implements Screen{
         System.out.print("Please choose option[4]: ");
         String choice = scanner.nextLine();
 
-        if(choice.equalsIgnoreCase("1")) {
-            WithdrawScreen withdrawScreen = new WithdrawScreen(account, accounts);
-            withdrawScreen.showScreen();
-        }else if(choice.equalsIgnoreCase("2")){
-            FundTransferScreen fundTransferScreen = new FundTransferScreen(account, accounts);
-            fundTransferScreen.showScreen();
-        }else if(choice.equalsIgnoreCase("3")){
-            TransactionHistoryScreen transactionHistoryScreen = new TransactionHistoryScreen(account, accounts);
-            transactionHistoryScreen.showScreen();
-        }else if(!(choice.equalsIgnoreCase("1") || choice.equalsIgnoreCase("2")
-                || choice.equalsIgnoreCase("3")|| choice.equalsIgnoreCase("4")) && !choice.isEmpty()) {
+        switch (choice) {
+            case "1":
+                WithdrawScreen withdrawScreen = new WithdrawScreen(account, accounts);
+                withdrawScreen.showScreen();
+            case "2":
+                FundTransferScreen fundTransferScreen = new FundTransferScreen(account, accounts);
+                fundTransferScreen.showScreen();
+            case "3":
+                TransactionHistoryScreen transactionHistoryScreen = new TransactionHistoryScreen(account, accounts);
+                transactionHistoryScreen.showScreen();
+            case "4": case "":
+                WelcomeScreen welcomeScreen = new WelcomeScreen(accounts);
+                welcomeScreen.showScreen();
+            default:
                 this.showScreen();
         }
     }

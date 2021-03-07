@@ -11,11 +11,10 @@ public class Main {
     public static void main(String[] args) throws IOException {
         UserData userData = new UserData();
         List<Account> accounts = userData.getUserDataFromCSV();
-        if(accounts != null)
-            Stream.of(accounts).forEach(System.out::println);
-            do {
-                WelcomeScreen welcomeScreen = new WelcomeScreen(accounts);
-                welcomeScreen.showScreen();
-            } while (true);
+        Stream.of(accounts).forEach(System.out::println);
+        do {
+           WelcomeScreen welcomeScreen = new WelcomeScreen(accounts);
+           welcomeScreen.showScreen();
+        } while (true);
     }
 }

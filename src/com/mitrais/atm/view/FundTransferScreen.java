@@ -54,17 +54,14 @@ public class FundTransferScreen implements Screen{
 
                     System.out.print("Please choose option[2]: ");
                     String choice = scanner.nextLine();
-                    if(choice.equalsIgnoreCase("1")) {
-                        transactionService.processFundTransfer(account, destAcc,choiceAmount,refNum, accounts);
-                    }else if(choice.equalsIgnoreCase("2")){
-                        transactionScreen.showScreen();
-                    }else if(!(choice.equalsIgnoreCase("1") || choice.equalsIgnoreCase("2"))
-                            && !choice.isEmpty()) {
-                        this.showScreen();
-                    }else {
-                        transactionScreen.showScreen();
+                    switch (choice) {
+                        case "1" :
+                            transactionService.processFundTransfer(account, destAcc,choiceAmount,refNum, accounts);
+                        case "2": case "" :
+                            transactionScreen.showScreen();
+                        default:
+                            this.showScreen();
                     }
-
                 }else {
                     transactionScreen.showScreen();
                 }

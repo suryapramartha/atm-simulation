@@ -1,5 +1,7 @@
 package com.mitrais.atm.model;
 
+import java.util.Objects;
+
 public class Account {
     private String name;
     private String pin;
@@ -45,6 +47,19 @@ public class Account {
 
     public void setAccNumber(String accNumber) {
         this.accNumber = accNumber;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Account account = (Account) o;
+        return accNumber.equals(account.accNumber);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(accNumber);
     }
 
     @Override

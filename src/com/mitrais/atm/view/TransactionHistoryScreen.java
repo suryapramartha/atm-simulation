@@ -41,14 +41,12 @@ public class TransactionHistoryScreen implements Screen{
         System.out.print("Please choose option[2]: ");
         String choice = scanner.nextLine();
 
-        if(choice.equalsIgnoreCase("1")) {
-            TransactionScreen transactionScreen = new TransactionScreen(account, accounts);
-            transactionScreen.showScreen();
-        }else if(choice.equalsIgnoreCase("2")) {
-            WelcomeScreen welcomeScreen = new WelcomeScreen(accounts);
-            welcomeScreen.showScreen();
-        }else if(!(choice.equalsIgnoreCase("1") || choice.equalsIgnoreCase("2") && !choice.isEmpty())) {
-            this.showScreen();
+        switch (choice) {
+            case "1": case "2": case "":
+                TransactionScreen transactionScreen = new TransactionScreen(account, accounts);
+                transactionScreen.showScreen();
+            default:
+                this.showScreen();
         }
     }
 }

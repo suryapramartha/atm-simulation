@@ -29,28 +29,21 @@ public class WithdrawScreen implements Screen{
         System.out.print("Please choose option[5]: ");
         String choice = scanner.nextLine();
 
-        if(choice.equalsIgnoreCase("1")) {
-            transactionService.processWithdraw(10, account, accounts);
-        }else if(choice.equalsIgnoreCase("2")){
-            transactionService.processWithdraw(50, account, accounts);
-        }else if(choice.equalsIgnoreCase("3")){
-            transactionService.processWithdraw(100, account, accounts);
-        }else if(choice.equalsIgnoreCase("4")){
-            OtherWithdrawScreen otherWithdrawScreen = new OtherWithdrawScreen(account, accounts);
-            otherWithdrawScreen.showScreen();
-        }
-        else if(choice.equalsIgnoreCase("5")){
-            TransactionScreen transactionScreen = new TransactionScreen(account, accounts);
-            transactionScreen.showScreen();
-        }
-        else if(!(choice.equalsIgnoreCase("1") || choice.equalsIgnoreCase("2") ||
-                choice.equalsIgnoreCase("3") ||
-                choice.equalsIgnoreCase("4") ||
-                choice.equalsIgnoreCase("5")) && !choice.isEmpty()) {
-            this.showScreen();
-        }else {
-            TransactionScreen transactionScreen = new TransactionScreen(account, accounts);
-            transactionScreen.showScreen();
+        switch (choice) {
+            case "1":
+                transactionService.processWithdraw(10, account, accounts);
+            case "2":
+                transactionService.processWithdraw(50, account, accounts);
+            case "3":
+                transactionService.processWithdraw(100, account, accounts);
+            case "4":
+                OtherWithdrawScreen otherWithdrawScreen = new OtherWithdrawScreen(account, accounts);
+                otherWithdrawScreen.showScreen();
+            case "5": case "":
+                TransactionScreen transactionScreen = new TransactionScreen(account, accounts);
+                transactionScreen.showScreen();
+            default:
+                this.showScreen();
         }
     }
 }

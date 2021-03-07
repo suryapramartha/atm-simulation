@@ -35,10 +35,7 @@ public class UserData {
         List<Account> result = loadCSV.stream()
                 .map(mapToAccount)
                 .collect(Collectors.toList());
-        boolean isNotValid = validateCSVData(result);
-        if(isNotValid)
-            result = null;
-        return result;
+        return filterDuplicateAccount(result);
     }
 
     public List<List<String>> loadCSVFile(String filepath) throws IOException {
@@ -48,6 +45,7 @@ public class UserData {
             File file = new File(filepath);
             InputStream inputStream = new FileInputStream(file);
             bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+            // change to Files
 
             data = bufferedReader
                     .lines()
@@ -71,14 +69,13 @@ public class UserData {
       return account;
     };
 
-    private boolean validateCSVData(List<Account> data) {
-        boolean isNotValid =  data.stream()
-                .map(p -> p.getAccNumber())
+    private List<Account> filterDuplicateAccount(List<Account> data) {
+        List<Account> result =  data.stream()
                 .distinct()
-                .count() < data.size();
-        if(isNotValid)
-            System.out.println("Error : Duplicate Account Number on CSV file!");
-        return isNotValid;
+                .collect(Collectors.toList());
+        if (result.size() < data.size())
+             System.out.println("Error : Duplicate Account Number on CSV file!");
+        return result;
     };
 
     public void updateCSVOnTransaction(Account origin, Account dest, String command, String amount) {
