@@ -1,7 +1,7 @@
 package com.mitrais.atm.view;
 
 import com.mitrais.atm.model.Account;
-import com.mitrais.atm.util.UserData;
+import com.mitrais.atm.model.Transaction;
 
 import java.util.Date;
 import java.util.List;
@@ -11,6 +11,8 @@ public class TransactionHistoryScreen implements Screen{
 
     Account account = null;
     List<Account> accounts = null;
+    Transaction transaction = new Transaction();
+    List<Transaction> transactions = transaction.getTransactions();
 
     public TransactionHistoryScreen(Account account, List<Account> accounts) {
         this.account = account;
@@ -19,21 +21,21 @@ public class TransactionHistoryScreen implements Screen{
 
     @Override
     public void showScreen() {
-        Scanner scanner = new Scanner(System.in);
-        UserData userData = new UserData();
-        List<List<String>> data = userData.getTransactionHistory(account.getAccNumber());
-        System.out.println("=======Transaction History Screen=======");
+        Scanner scanner = new Scanner(System.in);        System.out.println("=======Transaction History Screen=======");
         System.out.println("Name : "+account.getName());
         System.out.println("Account Number : "+account.getAccNumber());
         System.out.println("Date : "+new Date());
         System.out.println("=========================================");
         System.out.println("Date | Transaction Type | Amount | Balance");
-        data.stream().forEach(p -> {
-            System.out.print(p.get(1)+" | ");
-            System.out.print(p.get(2)+" | ");
-            System.out.print(p.get(3)+" | ");
-            System.out.println(p.get(4));
-        });
+        transactions.stream()
+                .filter(c -> c.getAccountNumber().equalsIgnoreCase(account.getAccNumber()))
+                .limit(10)
+                .forEach(p -> {
+                    System.out.print(p.getTransactionDate()+" | ");
+                    System.out.print(p.getTransactionType()+" | ");
+                    System.out.print(p.getAmount()+" | ");
+                    System.out.println(p.getBalance());
+                });
 
         System.out.println("=========================================");
         System.out.println("1. Transaction Screen");
