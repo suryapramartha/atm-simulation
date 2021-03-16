@@ -30,8 +30,11 @@ public class UserData {
         return userData;
     }
 
-    public List<Account> getUserDataFromCSV() throws IOException {
-        List<List<String>> loadCSV = loadCSVFile(FILE_INPUT_PATH);
+    public List<Account> getUserDataFromCSV(String path) throws Exception {
+        if (path == null) {
+            throw new Exception("File path not provided");
+        }
+        List<List<String>> loadCSV = loadCSVFile(path);
         List<Account> result = loadCSV.stream()
                 .map(mapToAccount)
                 .collect(Collectors.toList());
