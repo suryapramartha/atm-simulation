@@ -12,10 +12,6 @@ public class OtherWithdrawScreen implements Screen{
     List<Account> accounts = null;
     TransactionService transactionService = new TransactionService();
 
-    public OtherWithdrawScreen(Account account, List<Account> accounts) {
-        this.account = account;
-        this.accounts = accounts;
-    }
     @Override
     public void showScreen() {
         DataValidation validate = new DataValidation();
@@ -25,10 +21,10 @@ public class OtherWithdrawScreen implements Screen{
 
         String checkInput = validate.checkWithdrawAmount(choice);
         if (checkInput == null) {
-            transactionService.processWithdraw(Integer.valueOf(choice), account, accounts);
+            transactionService.processWithdraw(Integer.valueOf(choice));
         } else {
             System.out.println(checkInput);
-            WithdrawScreen withdrawScreen = new WithdrawScreen(account, accounts);
+            WithdrawScreen withdrawScreen = new WithdrawScreen();
             withdrawScreen.showScreen();
         }
     }

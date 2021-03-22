@@ -1,21 +1,20 @@
 package com.mitrais.atm.view;
 
 import com.mitrais.atm.model.Account;
+import com.mitrais.atm.service.AccountService;
+import com.mitrais.atm.service.AccountServiceImpl;
+import com.mitrais.atm.util.AccountRepository;
 import com.mitrais.atm.util.DataValidation;
 
 import java.util.List;
 import java.util.Scanner;
 
 public class WelcomeScreen implements Screen{
-
-    List<Account> accounts = null;
     Scanner scanner = new Scanner(System.in);
 
     DataValidation validation = new DataValidation();
-
-    public WelcomeScreen(List<Account> accounts) {
-        this.accounts = accounts;
-    }
+    AccountRepository accountRepository = new AccountRepository();
+    AccountServiceImpl accountService = new AccountServiceImpl();
 
     @Override
     public void showScreen() {
@@ -31,9 +30,11 @@ public class WelcomeScreen implements Screen{
             String accPin = scanner.nextLine();
             boolean isPinValid = validation.checkPIN(accPin);
             if (isPinValid) {
-                Account account = validation.checkLoginCredential(accNumber, accPin, accounts);
-                if(account != null) {
-                    TransactionScreen transactionScreen = new TransactionScreen(account,accounts);
+                boolean isValid = validation.checkLoginCredential(accNumber, accPin);
+                if(isValid) {
+                    Account account = accountService.getAccount(accNumber, accPin);
+                    accountService.setLoggedAccount(account);
+                    TransactionScreen transactionScreen = new TransactionScreen();
                     transactionScreen.showScreen();
                 }
             }

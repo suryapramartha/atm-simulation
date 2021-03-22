@@ -1,19 +1,15 @@
 package com.mitrais.atm.view;
 
 import com.mitrais.atm.model.Account;
+import com.mitrais.atm.service.AccountService;
+import com.mitrais.atm.util.AccountRepository;
 
 import java.util.List;
 import java.util.Scanner;
 
 public class TransactionScreen implements Screen{
 
-    Account account = null;
-    List<Account> accounts = null;
-
-    public TransactionScreen(Account account, List<Account> accounts) {
-        this.accounts = accounts;
-        this.account = account;
-    }
+    AccountService accountService;
 
     @Override
     public void showScreen() {
@@ -28,16 +24,16 @@ public class TransactionScreen implements Screen{
 
         switch (choice) {
             case "1":
-                WithdrawScreen withdrawScreen = new WithdrawScreen(account, accounts);
+                WithdrawScreen withdrawScreen = new WithdrawScreen();
                 withdrawScreen.showScreen();
             case "2":
-                FundTransferScreen fundTransferScreen = new FundTransferScreen(account, accounts);
+                FundTransferScreen fundTransferScreen = new FundTransferScreen();
                 fundTransferScreen.showScreen();
             case "3":
-                TransactionHistoryScreen transactionHistoryScreen = new TransactionHistoryScreen(account, accounts);
+                TransactionHistoryScreen transactionHistoryScreen = new TransactionHistoryScreen();
                 transactionHistoryScreen.showScreen();
             case "4": case "":
-                WelcomeScreen welcomeScreen = new WelcomeScreen(accounts);
+                WelcomeScreen welcomeScreen = new WelcomeScreen();
                 welcomeScreen.showScreen();
             default:
                 this.showScreen();

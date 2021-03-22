@@ -1,6 +1,8 @@
 package com.mitrais.atm.util;
 
 import com.mitrais.atm.model.Account;
+import com.mitrais.atm.service.AccountService;
+import com.mitrais.atm.service.AccountServiceImpl;
 import com.mitrais.atm.view.TransactionScreen;
 
 import java.util.List;
@@ -8,6 +10,7 @@ import java.util.Optional;
 import java.util.function.Predicate;
 
 public class DataValidation {
+    AccountService accountService = new AccountServiceImpl();
 
     public DataValidation() {}
 
@@ -36,18 +39,18 @@ public class DataValidation {
         return isValid;
     }
 
-    public Account checkLoginCredential(String accNumber, String accPin, List<Account> accounts) {
-        Account account = null;
+    public boolean checkLoginCredential(String accNumber, String accPin) {
+        boolean isValid = true;
+        List<Account> accounts = accountService.getAccountList();
         Predicate<Account> filterAccount = p ->
                 p.getAccNumber().equalsIgnoreCase(accNumber) && p.getPin().equalsIgnoreCase(accPin);
         Optional<Account> result = accounts.stream().filter(filterAccount).findFirst();
 
-        if(result.isPresent()) {
-            account = result.get();
-        }else {
+        if(!result.isPresent()) {
             System.out.println("Invalid Account Number/PIN");
+            isValid = false;
         }
-        return account;
+        return isValid;
     }
 
     public String checkWithdrawAmount(String amount) {
@@ -66,14 +69,17 @@ public class DataValidation {
         return errorMessage;
     }
 
-    public Account checkFundInputData(String dest, String amount, Account loggedAccount ,List<Account> accounts) {
+    public Account checkFundInputData(String dest, String amount) {
+
         Account account = null;
+        Account loggedAccount = accountService.getLoggedAccount();
+        List<Account> accountList = accountService.getAccountList();
         boolean isAccountExist = false;
         boolean isError = false;
 
         Predicate<Account> filterAccount = p ->
                 !p.getAccNumber().equalsIgnoreCase(loggedAccount.getAccNumber()) && p.getAccNumber().equalsIgnoreCase(dest);
-        Optional<Account> result = accounts.stream().filter(filterAccount).findFirst();
+        Optional<Account> result = accountList.stream().filter(filterAccount).findFirst();
         if(result.isPresent()) {
             isAccountExist = true;
             account = result.get();
@@ -107,7 +113,7 @@ public class DataValidation {
             }
         }
         if(isError) {
-            TransactionScreen transactionScreen = new TransactionScreen(loggedAccount, accounts);
+            TransactionScreen transactionScreen = new TransactionScreen();
             transactionScreen.showScreen();
         }
         return account;

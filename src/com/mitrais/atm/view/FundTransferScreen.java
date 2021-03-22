@@ -9,17 +9,11 @@ import java.util.List;
 import java.util.Scanner;
 
 public class FundTransferScreen implements Screen{
-    Account account = null;
-    List<Account> accounts = null;
     TransactionService transactionService = new TransactionService();
 
-    public FundTransferScreen(Account account, List<Account> accounts) {
-        this.account = account;
-        this.accounts = accounts;
-    }
     @Override
     public void showScreen() {
-        TransactionScreen transactionScreen = new TransactionScreen(account, accounts);
+        TransactionScreen transactionScreen = new TransactionScreen();
         Scanner scanner = new Scanner(System.in);
         System.out.println("=======Fund Transfer Screen=======");
         System.out.print("Please enter destination account and press enter to continue or" +
@@ -36,7 +30,7 @@ public class FundTransferScreen implements Screen{
                 transactionScreen.showScreen();
             }else {
                 DataValidation validate = new DataValidation();
-                Account destAcc = validate.checkFundInputData(choiceDest, choiceAmount, account, accounts);
+                Account destAcc = validate.checkFundInputData(choiceDest, choiceAmount);
                 if(destAcc != null) {
                     RandomNumberGenerator random = new RandomNumberGenerator();
                     String refNum = random.getRandom6DigitNumber();
@@ -56,7 +50,7 @@ public class FundTransferScreen implements Screen{
                     String choice = scanner.nextLine();
                     switch (choice) {
                         case "1" :
-                            transactionService.processFundTransfer(account, destAcc,choiceAmount,refNum, accounts);
+                            transactionService.processFundTransfer(destAcc,choiceAmount,refNum);
                         case "2": case "" :
                             transactionScreen.showScreen();
                         default:

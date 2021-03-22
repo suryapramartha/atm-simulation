@@ -1,44 +1,54 @@
-package com.mitrais.atm.util;
+package com.mitrais.atm.service;
 
 import com.mitrais.atm.model.Account;
+import com.mitrais.atm.util.AccountRepository;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-public class UserData {
+public class AccountServiceImpl implements AccountService{
+    AccountRepository accountRepository = new AccountRepository();
 
-    private static final String FILE_INPUT_PATH = "ATM-accounts.csv";
-    private static final String FILE_HISTORY_PATH = "ATM-accounts-history.csv";
     private static final String CSV_SEPARATOR = ",";
-    private static final String FILE_TEMP_PATH = "temp.csv";
-    private static final String WITHDRAW = "WITHDRAW";
-    private static final String FUND_TRANSFER = "FUND TRANSFER";
-    private static final String FUND_TRANSFER_RECEIVED = "TRANSFER RECEIVED";
-    public UserData() { }
+    public AccountServiceImpl() { }
 
-    public List<Account> getUserData() {
-        List<Account> userData = new ArrayList<>();
-        Account data1 = new Account("John Doe", "012108", 100, "112233");
-        Account data2 = new Account("Jane Doe", "932012", 30, "112244");
-        userData.add(data1);
-        userData.add(data2);
-        return userData;
-    }
-
-    public List<Account> getUserDataFromCSV(String path) throws Exception {
-        if (path == null) {
-            throw new Exception("File path not provided");
-        }
+    @Override
+    public List<Account> loadAccountsFromCSV(String path) throws Exception {
         List<List<String>> loadCSV = loadCSVFile(path);
         List<Account> result = loadCSV.stream()
                 .map(mapToAccount)
                 .collect(Collectors.toList());
-        return filterDuplicateAccount(result);
+
+        accountRepository.setAccounts(filterDuplicateAccount(result));
+        return accountRepository.getAccounts();
+    }
+
+    @Override
+    public Account getAccount(String accNumber, String accPin) {
+        List<Account> accounts = accountRepository.getAccounts();
+        Predicate<Account> filterAccount = p ->
+                p.getAccNumber().equalsIgnoreCase(accNumber) && p.getPin().equalsIgnoreCase(accPin);
+        return accounts.stream().filter(filterAccount).findFirst().get();
+    }
+
+    @Override
+    public Account getLoggedAccount() {
+        return accountRepository.getLoggedAccount();
+    }
+
+    @Override
+    public void setLoggedAccount(Account account) {
+        accountRepository.setLoggedAccount(account);
+    }
+
+    @Override
+    public List<Account> getAccountList() {
+        return accountRepository.getAccounts();
     }
 
     public List<List<String>> loadCSVFile(String filepath) throws IOException {

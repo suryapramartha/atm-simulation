@@ -1,6 +1,7 @@
 import com.mitrais.atm.model.Account;
+import com.mitrais.atm.util.AccountRepository;
 import com.mitrais.atm.util.DataValidation;
-import com.mitrais.atm.util.UserData;
+import com.mitrais.atm.service.AccountServiceImpl;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -9,6 +10,7 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 
 public class DataValidationTest {
+    private static final String FILE_INPUT_PATH = "resources/ATM-accounts.csv";
 
     String ERROR_INVALID_ACCOUNT = "Invalid account";
     String ERROR_INVALID_AMOUNT = "Invalid amount";
@@ -20,17 +22,18 @@ public class DataValidationTest {
     List<Account> accounts;
 
     Account result;
-    UserData userData;
+    AccountServiceImpl accountServiceImpl;
+    AccountRepository accountRepository = new AccountRepository();
 
     @Before
-    public void setUp() {
+    public void setUp() throws Exception {
         errorMessage = null;
         isLoggedIn = false;
         accountData = null;
 
         result = null;
-        UserData userData = new UserData();
-        List<Account> accounts =  userData.getUserData();
+        AccountServiceImpl accountServiceImpl = new AccountServiceImpl();
+        List<Account> accounts =  accountServiceImpl.loadAccountsFromCSV(FILE_INPUT_PATH);
     }
 
 
