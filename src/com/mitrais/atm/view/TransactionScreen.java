@@ -1,10 +1,7 @@
 package com.mitrais.atm.view;
 
-import com.mitrais.atm.model.Account;
 import com.mitrais.atm.service.AccountService;
-import com.mitrais.atm.util.AccountRepository;
 
-import java.util.List;
 import java.util.Scanner;
 
 public class TransactionScreen implements Screen{

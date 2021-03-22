@@ -5,7 +5,6 @@ import com.mitrais.atm.service.TransactionService;
 import com.mitrais.atm.util.DataValidation;
 import com.mitrais.atm.util.RandomNumberGenerator;
 
-import java.util.List;
 import java.util.Scanner;
 
 public class FundTransferScreen implements Screen{

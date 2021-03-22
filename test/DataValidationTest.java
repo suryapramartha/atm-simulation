@@ -1,5 +1,5 @@
 import com.mitrais.atm.model.Account;
-import com.mitrais.atm.util.AccountRepository;
+import com.mitrais.atm.repository.AccountRepository;
 import com.mitrais.atm.util.DataValidation;
 import com.mitrais.atm.service.AccountServiceImpl;
 import org.junit.Before;

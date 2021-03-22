@@ -6,8 +6,6 @@ import com.mitrais.atm.view.FundTransferSummaryScreen;
 import com.mitrais.atm.view.SummaryScreen;
 import com.mitrais.atm.view.WithdrawScreen;
 
-import java.util.List;
-
 public class TransactionService {
     AccountService accountService = new AccountServiceImpl();
 

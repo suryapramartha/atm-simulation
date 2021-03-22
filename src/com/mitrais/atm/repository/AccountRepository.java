@@ -1,4 +1,4 @@
-package com.mitrais.atm.util;
+package com.mitrais.atm.repository;
 
 import com.mitrais.atm.model.Account;
 

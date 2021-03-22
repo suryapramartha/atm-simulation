@@ -1,12 +1,10 @@
 package com.mitrais.atm.view;
 
 import com.mitrais.atm.model.Account;
-import com.mitrais.atm.service.AccountService;
+import com.mitrais.atm.repository.AccountRepository;
 import com.mitrais.atm.service.AccountServiceImpl;
-import com.mitrais.atm.util.AccountRepository;
 import com.mitrais.atm.util.DataValidation;
 
-import java.util.List;
 import java.util.Scanner;
 
 public class WelcomeScreen implements Screen{

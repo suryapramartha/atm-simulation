@@ -1,7 +1,7 @@
 package com.mitrais.atm.service;
 
 import com.mitrais.atm.model.Account;
-import com.mitrais.atm.util.AccountRepository;
+import com.mitrais.atm.repository.AccountRepository;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -23,9 +23,7 @@ public class AccountServiceImpl implements AccountService{
         List<Account> result = loadCSV.stream()
                 .map(mapToAccount)
                 .collect(Collectors.toList());
-
-        accountRepository.setAccounts(filterDuplicateAccount(result));
-        return accountRepository.getAccounts();
+        return filterDuplicateAccount(result);
     }
 
     @Override
@@ -49,6 +47,11 @@ public class AccountServiceImpl implements AccountService{
     @Override
     public List<Account> getAccountList() {
         return accountRepository.getAccounts();
+    }
+
+    @Override
+    public void setAccountList(List<Account> accountList) {
+        accountRepository.setAccounts(accountList);
     }
 
     public List<List<String>> loadCSVFile(String filepath) throws IOException {

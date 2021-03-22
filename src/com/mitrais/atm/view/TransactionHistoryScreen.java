@@ -1,6 +1,5 @@
 package com.mitrais.atm.view;
 
-import com.mitrais.atm.model.Account;
 import com.mitrais.atm.model.Transaction;
 import com.mitrais.atm.service.AccountService;
 import com.mitrais.atm.service.AccountServiceImpl;
@@ -18,7 +17,8 @@ public class TransactionHistoryScreen implements Screen{
 
     @Override
     public void showScreen() {
-        Scanner scanner = new Scanner(System.in);        System.out.println("=======Transaction History Screen=======");
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("=======Transaction History Screen=======");
         System.out.println("Name : "+accountService.getLoggedAccount().getName());
         System.out.println("Account Number : "+accountService.getLoggedAccount().getAccNumber());
         System.out.println("Date : "+new Date());
