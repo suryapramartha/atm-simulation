@@ -5,6 +5,7 @@ import com.mitrais.atm.model.Transaction;
 import com.mitrais.atm.service.AccountService;
 import com.mitrais.atm.service.AccountServiceImpl;
 
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
@@ -25,7 +26,7 @@ public class TransactionHistoryScreen implements Screen{
         System.out.println("Date | Transaction Type | Amount | Balance");
         transactions.stream()
                 .filter(c -> c.getAccountNumber().equalsIgnoreCase(accountService.getLoggedAccount().getAccNumber()))
-                .limit(10)
+                .limit(10).sorted(Comparator.comparing(Transaction::getTransactionDate).reversed())
                 .forEach(p -> {
                     System.out.print(p.getTransactionDate()+" | ");
                     System.out.print(p.getTransactionType()+" | ");
