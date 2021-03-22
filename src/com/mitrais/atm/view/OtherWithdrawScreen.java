@@ -17,15 +17,14 @@ public class OtherWithdrawScreen implements Screen{
         DataValidation validate = new DataValidation();
         Scanner scanner = new Scanner(System.in);
         System.out.print("Enter amount to withdraw : ");
-        String choice = scanner.nextLine();
+        String amount = scanner.nextLine();
 
-        String checkInput = validate.checkWithdrawAmount(choice);
-        if (checkInput == null) {
-            transactionService.processWithdraw(Integer.valueOf(choice));
+        boolean inputValid = validate.checkWithdrawAmount(amount);
+        if (inputValid) {
+            transactionService.processWithdraw(Integer.valueOf(amount));
         } else {
-            System.out.println(checkInput);
-            WithdrawScreen withdrawScreen = new WithdrawScreen();
-            withdrawScreen.showScreen();
+            TransactionScreen transactionScreen = new TransactionScreen();
+            transactionScreen.showScreen();
         }
     }
 }

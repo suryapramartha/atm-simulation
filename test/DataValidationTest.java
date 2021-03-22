@@ -1,7 +1,7 @@
 import com.mitrais.atm.model.Account;
 import com.mitrais.atm.repository.AccountRepository;
-import com.mitrais.atm.util.DataValidation;
 import com.mitrais.atm.service.AccountServiceImpl;
+import com.mitrais.atm.util.DataValidation;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -61,7 +61,7 @@ public class DataValidationTest {
     public void checkWithdrawAmountDidSuccess() {
         DataValidation validation = new DataValidation();
         String amount = "900";
-        String result = validation.checkWithdrawAmount(amount);
+        boolean result = validation.checkWithdrawAmount(amount);
         assertEquals(result, null);
     }
 
@@ -73,16 +73,16 @@ public class DataValidationTest {
         String amount1 = "efbefb";
         // to check if amount is able to divided by 10
         String amount2 = "78";
-        String result1 = validation.checkWithdrawAmount(amount1);
+        Boolean result1 = validation.checkWithdrawAmount(amount1);
         assertEquals(result1, error);
-        String result2 = validation.checkWithdrawAmount(amount2);
+        boolean result2 = validation.checkWithdrawAmount(amount2);
         assertEquals(result2,error);
     }
     @Test
     public void checkWithdrawAmountMaximumAmount() {
         DataValidation validation = new DataValidation();
         String amount = "10000000";
-        String result = validation.checkWithdrawAmount(amount);
+        boolean result = validation.checkWithdrawAmount(amount);
         assertEquals(result, "Maximum amount to withdraw is $1000");
     }
 

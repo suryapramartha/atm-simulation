@@ -53,20 +53,23 @@ public class DataValidation {
         return isValid;
     }
 
-    public String checkWithdrawAmount(String amount) {
-        String errorMessage = null;
+    public boolean checkWithdrawAmount(String amount) {
+        boolean isValid = true;
 
         if(!amount.matches("[0-9]+")){
-            errorMessage = "Invalid amount";
+            System.out.println("Invalid amount");
+            isValid = false;
         }else {
             int amountNumb = Integer.valueOf(amount);
             if(amountNumb > 1000) {
-                errorMessage = "Maximum amount to withdraw is $1000";
+                System.out.println("Maximum amount to withdraw is $1000");
+                isValid = false;
             }else if (amountNumb%10 != 0) {
-                errorMessage = "Invalid amount";
+                System.out.println("Invalid amount");
+                isValid = false;
             }
         }
-        return errorMessage;
+        return isValid;
     }
 
     public Account checkFundInputData(String dest, String amount) {
