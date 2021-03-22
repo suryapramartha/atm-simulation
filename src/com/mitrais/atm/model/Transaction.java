@@ -1,15 +1,16 @@
 package com.mitrais.atm.model;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class Transaction {
     private String accountNumber;
+    private String descAccountNumber;
     private String transactionType;
-    private Date transactionDate;
+    private LocalDate transactionDate;
     private String amount;
     private int balance;
 
@@ -18,8 +19,16 @@ public class Transaction {
     public Transaction() {
     }
 
-    public Transaction(String accountNumber, String transactionType, Date transactionDate, String amount, int balance) {
+    public Transaction(String accountNumber, String transactionType, LocalDate transactionDate, String amount, int balance) {
         this.accountNumber = accountNumber;
+        this.transactionType = transactionType;
+        this.transactionDate = transactionDate;
+        this.amount = amount;
+        this.balance = balance;
+    }
+    public Transaction(String accountNumber,String descAccountNumber, String transactionType, LocalDate transactionDate, String amount, int balance) {
+        this.accountNumber = accountNumber;
+        this.descAccountNumber = descAccountNumber;
         this.transactionType = transactionType;
         this.transactionDate = transactionDate;
         this.amount = amount;
@@ -42,11 +51,11 @@ public class Transaction {
         this.transactionType = transactionType;
     }
 
-    public Date getTransactionDate() {
+    public LocalDate getTransactionDate() {
         return transactionDate;
     }
 
-    public void setTransactionDate(Date transactionDate) {
+    public void setTransactionDate(LocalDate transactionDate) {
         this.transactionDate = transactionDate;
     }
 
@@ -66,8 +75,21 @@ public class Transaction {
         this.balance = balance;
     }
 
+    public String getDescAccountNumber() {
+        return descAccountNumber;
+    }
+
+    public void setDescAccountNumber(String descAccountNumber) {
+        this.descAccountNumber = descAccountNumber;
+    }
+
     public void addTransaction(Account origin, String transactionType, String amount) {
-        Transaction newTransaction = new Transaction(origin.getAccNumber(), transactionType, new Date(), amount, origin.getBalance());
+        Transaction newTransaction = new Transaction(origin.getAccNumber(), transactionType, LocalDate.now(), amount, origin.getBalance());
+        this.transactions.add(newTransaction);
+    }
+
+    public void addTransaction(Account origin, Account dest, String transactionType, String amount) {
+        Transaction newTransaction = new Transaction(origin.getAccNumber(),dest.getAccNumber(), transactionType, LocalDate.now(), amount, origin.getBalance());
         this.transactions.add(newTransaction);
     }
 

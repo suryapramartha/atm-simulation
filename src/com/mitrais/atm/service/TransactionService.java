@@ -30,7 +30,7 @@ public class TransactionService {
     }
     public void processFundTransfer(Account dest, String amount, String refNo) {
         Account origin = accountService.getLoggedAccount();
-        transaction.addTransaction(origin,FUND_TRANSFER,amount);
+        transaction.addTransaction(origin,dest,FUND_TRANSFER,amount);
         origin.setBalance(origin.getBalance() - Integer.parseInt(amount));
         dest.setBalance(dest.getBalance() + Integer.parseInt(amount));
 

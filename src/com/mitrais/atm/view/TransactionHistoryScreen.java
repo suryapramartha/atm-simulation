@@ -22,11 +22,12 @@ public class TransactionHistoryScreen implements Screen{
         System.out.println("Account Number : "+accountService.getLoggedAccount().getAccNumber());
         System.out.println("Date : "+new Date());
         System.out.println("=========================================");
-        System.out.println("Date | Transaction Type | Amount | Balance");
+        System.out.println("Date | Transaction Type | Dest Account | Amount | Balance");
         transactions.stream()
                 .forEach(p -> {
                     System.out.print(p.getTransactionDate()+" | ");
                     System.out.print(p.getTransactionType()+" | ");
+                    System.out.print(p.getDescAccountNumber() == null ? "- | " : p.getDescAccountNumber()+" | ");
                     System.out.print(p.getAmount()+" | ");
                     System.out.println(p.getBalance());
                 });
