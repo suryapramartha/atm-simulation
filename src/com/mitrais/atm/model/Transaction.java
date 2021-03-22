@@ -1,8 +1,10 @@
 package com.mitrais.atm.model;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Transaction {
     private String accountNumber;
@@ -72,6 +74,13 @@ public class Transaction {
     public List<Transaction> getTransactions() {
         return this.transactions;
     }
+
+    public List<Transaction> getLastTenTransactions(String accountNumber) {
+        return this.transactions.stream()
+                .filter(c -> c.getAccountNumber().equalsIgnoreCase(accountNumber))
+                .limit(10).sorted(Comparator.comparing(Transaction::getTransactionDate).reversed())
+                .collect(Collectors.toList());
+    };
 
     @Override
     public String toString() {
