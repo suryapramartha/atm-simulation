@@ -5,7 +5,6 @@ spring:
     url: jdbc:postgresql://${DB_PATH:localhost}:${DB_PORT:5432}/${DB_NAME:atm}
     username: ${DB_USERNAME:postgres}
     password: ${DB_PASSWORD:password}
-    initialization-mode: always
 
 # JPA properties
 ---
@@ -16,7 +15,18 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         hbm2ddl:
-          auto: create
+          auto: validate
         format_sql: true
         temp:
           use_jdbc_metadata_defaults: false
+
+# Flyaway properties
+---
+spring:
+  flyway:
+    url: jdbc:postgresql://${DB_PATH:localhost}:${DB_PORT:5432}/${DB_NAME:atm}
+    schemas: public
+    user: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:password}
+    locations: classpath:db
+    baseline-on-migrate: true
