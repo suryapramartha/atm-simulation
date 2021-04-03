@@ -5,7 +5,9 @@ import com.mitrais.atm.model.Transaction;
 import com.mitrais.atm.view.FundTransferSummaryScreen;
 import com.mitrais.atm.view.SummaryScreen;
 import com.mitrais.atm.view.WithdrawScreen;
+import org.springframework.stereotype.Service;
 
+@Service
 public class TransactionService {
     AccountService accountService = new AccountServiceImpl();
 

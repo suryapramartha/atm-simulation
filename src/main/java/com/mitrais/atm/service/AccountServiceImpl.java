@@ -2,6 +2,7 @@ package com.mitrais.atm.service;
 
 import com.mitrais.atm.model.Account;
 import com.mitrais.atm.repository.AccountRepository;
+import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -11,6 +12,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+@Service
 public class AccountServiceImpl implements AccountService{
     AccountRepository accountRepository = new AccountRepository();
 

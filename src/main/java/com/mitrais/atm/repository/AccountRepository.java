@@ -1,9 +1,11 @@
 package com.mitrais.atm.repository;
 
 import com.mitrais.atm.model.Account;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public class AccountRepository {
     private static List<Account> accounts;
     private static Account loggedAccount;

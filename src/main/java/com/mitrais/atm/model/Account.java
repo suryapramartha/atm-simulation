@@ -1,12 +1,17 @@
 package com.mitrais.atm.model;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
 import java.util.Objects;
 
+@Entity
 public class Account {
+    @Id
+    private String accNumber;
     private String name;
     private String pin;
     private int balance;
-    private String accNumber;
+
 
     public Account(String name, String pin, int balance, String accNumber) {
         this.name = name;
