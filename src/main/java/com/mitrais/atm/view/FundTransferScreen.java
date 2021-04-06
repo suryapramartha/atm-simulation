@@ -2,7 +2,7 @@ package com.mitrais.atm.view;
 
 import com.mitrais.atm.model.Account;
 import com.mitrais.atm.service.TransactionService;
-import com.mitrais.atm.util.DataValidation;
+import com.mitrais.atm.service.DataValidationServiceImpl;
 import com.mitrais.atm.util.RandomNumberGenerator;
 
 import java.util.Scanner;
@@ -28,7 +28,7 @@ public class FundTransferScreen implements Screen{
             if(choiceAmount.isEmpty()) {
                 transactionScreen.showScreen();
             }else {
-                DataValidation validate = new DataValidation();
+                DataValidationServiceImpl validate = new DataValidationServiceImpl();
                 Account destAcc = validate.checkFundInputData(choiceDest, choiceAmount);
                 if(destAcc != null) {
                     RandomNumberGenerator random = new RandomNumberGenerator();

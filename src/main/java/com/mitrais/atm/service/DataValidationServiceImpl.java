@@ -1,18 +1,23 @@
-package com.mitrais.atm.util;
+package com.mitrais.atm.service;
 
 import com.mitrais.atm.model.Account;
-import com.mitrais.atm.service.AccountService;
-import com.mitrais.atm.service.AccountServiceImpl;
+import com.mitrais.atm.repository.AccountRepository;
 import com.mitrais.atm.view.TransactionScreen;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-public class DataValidation {
+@Service
+public class DataValidationServiceImpl implements DataValidationService {
     AccountService accountService = new AccountServiceImpl();
 
-    public DataValidation() {}
+    @Autowired
+    private AccountRepository accountRepository;
+
+    public DataValidationServiceImpl() {}
 
     public boolean checkAccountNumberCredential(String accNumber) {
         boolean isValid = true;
@@ -39,18 +44,18 @@ public class DataValidation {
         return isValid;
     }
 
-    public boolean checkLoginCredential(String accNumber, String accPin) {
-        boolean isValid = true;
-        List<Account> accounts = accountService.getAccountList();
+    @Override
+    public String checkLoginCredential(String accNumber, String accPin) {
+        String error = null;
+        List<Account> accounts = accountRepository.findAll();
         Predicate<Account> filterAccount = p ->
                 p.getAccNumber().equalsIgnoreCase(accNumber) && p.getPin().equalsIgnoreCase(accPin);
         Optional<Account> result = accounts.stream().filter(filterAccount).findFirst();
 
         if(!result.isPresent()) {
-            System.out.println("Invalid Account Number/PIN");
-            isValid = false;
+            error = "Invalid Account Number/PIN";
         }
-        return isValid;
+        return error;
     }
 
     public boolean checkWithdrawAmount(String amount) {

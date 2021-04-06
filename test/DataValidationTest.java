@@ -1,7 +1,7 @@
 import com.mitrais.atm.model.Account;
 import com.mitrais.atm.repository.AccountRepository;
 import com.mitrais.atm.service.AccountServiceImpl;
-import com.mitrais.atm.util.DataValidation;
+import com.mitrais.atm.service.DataValidationServiceImpl;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -23,7 +23,6 @@ public class DataValidationTest {
 
     Account result;
     AccountServiceImpl accountServiceImpl;
-    AccountRepository accountRepository = new AccountRepository();
 
     @Before
     public void setUp() throws Exception {
@@ -39,7 +38,7 @@ public class DataValidationTest {
 
     @Test
     public void checkAccountNumberCredentialErrorNumberOnlyAccNumber() {
-        DataValidation datavalidation = new DataValidation();
+        DataValidationServiceImpl datavalidation = new DataValidationServiceImpl();
         String accNumber = "11223f";
         String pin = "012108";
 
@@ -49,7 +48,7 @@ public class DataValidationTest {
 
     @Test
     public void checkLoginCredentialErrorLengthPIN() {
-        DataValidation datavalidation = new DataValidation();
+        DataValidationServiceImpl datavalidation = new DataValidationServiceImpl();
         String accNumber = "112233";
         String pin = "0121084";
 
@@ -59,7 +58,7 @@ public class DataValidationTest {
 
     @Test
     public void checkWithdrawAmountDidSuccess() {
-        DataValidation validation = new DataValidation();
+        DataValidationServiceImpl validation = new DataValidationServiceImpl();
         String amount = "900";
         boolean result = validation.checkWithdrawAmount(amount);
         assertEquals(result, null);
@@ -67,7 +66,7 @@ public class DataValidationTest {
 
     @Test
     public void checkWithdrawAmountInvalidAmount() {
-        DataValidation validation = new DataValidation();
+        DataValidationServiceImpl validation = new DataValidationServiceImpl();
         String error = "Invalid amount";
         // to check numbers input only
         String amount1 = "efbefb";
@@ -80,7 +79,7 @@ public class DataValidationTest {
     }
     @Test
     public void checkWithdrawAmountMaximumAmount() {
-        DataValidation validation = new DataValidation();
+        DataValidationServiceImpl validation = new DataValidationServiceImpl();
         String amount = "10000000";
         boolean result = validation.checkWithdrawAmount(amount);
         assertEquals(result, "Maximum amount to withdraw is $1000");

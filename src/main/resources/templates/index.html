@@ -18,17 +18,22 @@
         </div>
     </nav>
     <div class="container-fluid">
+        <form th:action="@{/login}" method="POST">
         <div class="input-group">
             <h5>Enter Account Number</h5>
-            <input type="text" class="form-control" placeholder="Account Number" id="accNumber">
+            <input type="text" class="form-control" required="required" placeholder="Account Number" name="accNumber">
         </div>
         <br>
         <div class="input-group">
             <h5>Enter PIN</h5>
-            <input type="text" class="form-control" placeholder="PIN" id="accPin">
+            <input type="text" class="form-control" required="required" placeholder="PIN" name="accPin">
         </div>
         <br>
-        <button class="btn btn-primary">Login</button>
+        <input type="submit" value="Login" class="btn btn-primary">
+        </form><br>
+        <div th:if="${errorMessage} != null" class="alert alert-danger" >
+            <p th:text="${errorMessage}"></p>
+        </div>
     </div>
 </body>
 </html>

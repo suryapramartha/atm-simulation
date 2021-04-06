@@ -2,7 +2,7 @@ package com.mitrais.atm.view;
 
 import com.mitrais.atm.model.Account;
 import com.mitrais.atm.service.TransactionService;
-import com.mitrais.atm.util.DataValidation;
+import com.mitrais.atm.service.DataValidationServiceImpl;
 
 import java.util.List;
 import java.util.Scanner;
@@ -14,7 +14,7 @@ public class OtherWithdrawScreen implements Screen{
 
     @Override
     public void showScreen() {
-        DataValidation validate = new DataValidation();
+        DataValidationServiceImpl validate = new DataValidationServiceImpl();
         Scanner scanner = new Scanner(System.in);
         System.out.print("Enter amount to withdraw : ");
         String amount = scanner.nextLine();
