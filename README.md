@@ -1,20 +1,33 @@
 # ATM Simulation app
 
+## Project Requirements
+- Maven
+- PostgreSQL DB 
+- JDK version 8 or later
+
 ## To run the project :
+`mvn spring-boot:run`
 
-1. Create an executable JAR file from the application
+## To run the project from JAR file : 
+Create an executable JAR file from the application
 
-      if you are using Intellij IDE, you can create JAR by
-      
-      - Go to **File > Project Structure**
-      - Tab **Artifact** > click "+" button.
-      - Choose **JAR > From modules with dependencies..**
-      - Select your main class and click OK
-      - Build the artifact on menu **Build > Build Artifacts**
+with Maven
+- on the project root, type `mvn clean install`
+- head to target folder, then run `java -jar {jar_name}.jar`
 
-2. From the JAR directory, Run it with the command `java -Dfile={file_csv_source_path} -jar {jar_name}.jar`
-      - if -Dfile not provided, the app will throw error 
+without Maven
+if you are using Intellij IDE, you can create JAR by
+- Go to **File > Project Structure**
+- Tab **Artifact** > click "+" button.
+- Choose **JAR > From modules with dependencies..**
+- Select your main class and click OK
+- Build the artifact on menu **Build > Build Artifacts**
+- From the JAR directory, Run it with the command `java -jar {jar_name}.jar`
 
+
+## ATM-Simulation 3
+- Maven Support
+- Add Thymeleaf templating view
 
 ## ATM-Simulation 2
 
