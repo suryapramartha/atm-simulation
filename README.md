@@ -27,6 +27,7 @@ if you are using Intellij IDE, you can create JAR by
 
 ## ATM-Simulation 3
 - Maven Support
+- Spring Boot Support
 - Add Thymeleaf templating view
 
 ## ATM-Simulation 2
