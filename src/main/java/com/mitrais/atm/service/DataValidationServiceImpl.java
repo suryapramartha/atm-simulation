@@ -80,14 +80,14 @@ public class DataValidationServiceImpl implements DataValidationService {
     public Account checkFundInputData(String dest, String amount) {
 
         Account account = null;
-        Account loggedAccount = accountService.getLoggedAccount();
         List<Account> accountList = accountService.getAccountList();
         boolean isAccountExist = false;
         boolean isError = false;
 
-        Predicate<Account> filterAccount = p ->
-                !p.getAccNumber().equalsIgnoreCase(loggedAccount.getAccNumber()) && p.getAccNumber().equalsIgnoreCase(dest);
-        Optional<Account> result = accountList.stream().filter(filterAccount).findFirst();
+//        Predicate<Account> filterAccount = p ->
+//                !p.getAccNumber().equalsIgnoreCase(loggedAccount.getAccNumber()) && p.getAccNumber().equalsIgnoreCase(dest);
+//      Optional<Account> result = accountList.stream().filter(filterAccount).findFirst();
+        Optional<Account> result = null;
         if(result.isPresent()) {
             isAccountExist = true;
             account = result.get();
@@ -114,10 +114,11 @@ public class DataValidationServiceImpl implements DataValidationService {
                 }else if (amountNumb<1) {
                     System.out.println("Minimum amount to withdraw is $1");
                     isError = true;
-                }else if(amountNumb > loggedAccount.getBalance()) {
-                    System.out.println("Insufficient balance $"+amountNumb);
-                    isError = true;
                 }
+//                else if(amountNumb > loggedAccount.getBalance()) {
+//                    System.out.println("Insufficient balance $"+amountNumb);
+//                    isError = true;
+//                }
             }
         }
         if(isError) {

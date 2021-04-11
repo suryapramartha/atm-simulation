@@ -12,14 +12,14 @@ public class TransactionHistoryScreen implements Screen{
 
     AccountService accountService = new AccountServiceImpl();
     Transaction transaction = new Transaction();
-    List<Transaction> transactions = transaction.getLastTenTransactions(accountService.getLoggedAccount().getAccNumber());
+    List<Transaction> transactions = null;//transaction.getLastTenTransactions(accountService.getLoggedAccount().getAccNumber());
 
     @Override
     public void showScreen() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("=======Transaction History Screen=======");
-        System.out.println("Name : "+accountService.getLoggedAccount().getName());
-        System.out.println("Account Number : "+accountService.getLoggedAccount().getAccNumber());
+        //System.out.println("Name : "+accountService.getLoggedAccount().getName());
+        //System.out.println("Account Number : "+accountService.getLoggedAccount().getAccNumber());
         System.out.println("Date : "+new Date());
         System.out.println("=========================================");
         System.out.println("Date | Transaction Type | Dest Account | Amount | Balance");

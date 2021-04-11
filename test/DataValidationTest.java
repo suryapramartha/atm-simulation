@@ -32,7 +32,6 @@ public class DataValidationTest {
 
         result = null;
         AccountServiceImpl accountServiceImpl = new AccountServiceImpl();
-        List<Account> accounts =  accountServiceImpl.loadAccountsFromCSV(FILE_INPUT_PATH);
     }
 
 

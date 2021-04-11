@@ -30,7 +30,6 @@ public class WelcomeScreen implements Screen{
                 boolean isValid = true;
                 if(isValid) {
                     Account account = accountService.getAccount(accNumber, accPin);
-                    accountService.setLoggedAccount(account);
                     TransactionScreen transactionScreen = new TransactionScreen();
                     transactionScreen.showScreen();
                 }

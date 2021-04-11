@@ -21,7 +21,7 @@ public class SummaryScreen implements Screen {
         System.out.println("=======Summary Screen=======");
         System.out.println(new Date());
         System.out.println("Withdraw : $"+withdraw);
-        System.out.println("Balance : $"+ accountService.getLoggedAccount().getBalance());
+        //System.out.println("Balance : $"+ accountService.getLoggedAccount().getBalance());
         System.out.println("\n");
         System.out.println("1. Transaction");
         System.out.println("2. Exit");

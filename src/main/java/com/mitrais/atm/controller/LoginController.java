@@ -1,5 +1,7 @@
 package com.mitrais.atm.controller;
 
+import com.mitrais.atm.model.Account;
+import com.mitrais.atm.service.AccountService;
 import com.mitrais.atm.service.DataValidationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,6 +16,9 @@ public class LoginController {
     @Autowired
     private DataValidationService dataValidationService;
 
+    @Autowired
+    private AccountService accountService;
+
 
     @PostMapping("/login")
     public String login(
@@ -22,7 +27,9 @@ public class LoginController {
             Model model) {
         String errorMsg = dataValidationService.checkLoginCredential(accNumber, accPin);
         if (errorMsg == null) {
-            return "not error";
+            Account account = accountService.getAccount(accNumber, accPin);
+            model.addAttribute("account", account);
+            return "screen/transactionScreen";
         } else {
             model.addAttribute("errorMessage", errorMsg);
             return "index";

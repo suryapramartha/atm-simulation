@@ -17,11 +17,10 @@ public class TransactionService {
     Transaction transaction = new Transaction();
 
     public void processWithdraw(int deduction)  {
-        Account loggedAccount = accountService.getLoggedAccount();
-        int balance = loggedAccount.getBalance();
+        int balance = 0;//loggedAccount.getBalance();
         if(balance >= deduction) {
-            transaction.addTransaction(loggedAccount, WITHDRAW, String.valueOf(deduction));
-            loggedAccount.setBalance(balance - deduction);
+            //transaction.addTransaction(loggedAccount, WITHDRAW, String.valueOf(deduction));
+            //loggedAccount.setBalance(balance - deduction);
             SummaryScreen summaryScreen = new SummaryScreen(deduction);
             summaryScreen.showScreen();
         }else {
@@ -31,9 +30,9 @@ public class TransactionService {
         }
     }
     public void processFundTransfer(Account dest, String amount, String refNo) {
-        Account origin = accountService.getLoggedAccount();
-        transaction.addTransaction(origin,dest,FUND_TRANSFER,amount);
-        origin.setBalance(origin.getBalance() - Integer.parseInt(amount));
+        //Account origin = accountService.getLoggedAccount();
+        //transaction.addTransaction(origin,dest,FUND_TRANSFER,amount);
+        //origin.setBalance(origin.getBalance() - Integer.parseInt(amount));
         dest.setBalance(dest.getBalance() + Integer.parseInt(amount));
 
         FundTransferSummaryScreen fundTransferSummaryScreen = new FundTransferSummaryScreen(dest, amount, refNo);

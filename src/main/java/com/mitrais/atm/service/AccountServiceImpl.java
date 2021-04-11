@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Service
@@ -20,21 +19,8 @@ public class AccountServiceImpl implements AccountService{
 
     @Override
     public Account getAccount(String accNumber, String accPin) {
-        //List<Account> accounts = accountRepository.getAccounts();
-        Predicate<Account> filterAccount = p ->
-                p.getAccNumber().equalsIgnoreCase(accNumber) && p.getPin().equalsIgnoreCase(accPin);
-        //return accounts.stream().filter(filterAccount).findFirst().get();
-        return null;
+        return accountRepository.findByAccNumberAndPin(accNumber, accPin);
     }
-
-    @Override
-    public Account getLoggedAccount() {
-        return null;
-    }
-
-    @Override
-    public void setLoggedAccount(Account account) {
-            }
 
     @Override
     public List<Account> getAccountList() {
@@ -63,6 +49,4 @@ public class AccountServiceImpl implements AccountService{
              System.out.println("Error : Duplicate Account Number on CSV file!");
         return result;
     };
-
-
 }
