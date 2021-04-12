@@ -5,4 +5,6 @@ public interface DataValidationService {
 
     String checkWithdrawAmount(String amount);
 
+    String checkFundInputData(String destAcc, String amount);
+
 }

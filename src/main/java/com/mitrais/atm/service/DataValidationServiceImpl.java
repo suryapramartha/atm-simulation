@@ -81,54 +81,42 @@ public class DataValidationServiceImpl implements DataValidationService {
         return error;
     }
 
-    public Account checkFundInputData(String dest, String amount) {
+    @Override
+    public String checkFundInputData(String dest, String amount) {
+        String errorMsg = null;
+        int balance = accountService.getLoggedAccount().getBalance();
 
-        Account account = null;
-        //List<Account> accountList = accountService.getAccountList();
-        boolean isAccountExist = false;
-        boolean isError = false;
-
-//        Predicate<Account> filterAccount = p ->
-//                !p.getAccNumber().equalsIgnoreCase(loggedAccount.getAccNumber()) && p.getAccNumber().equalsIgnoreCase(dest);
-//      Optional<Account> result = accountList.stream().filter(filterAccount).findFirst();
-        Optional<Account> result = null;
-        if(result.isPresent()) {
-            isAccountExist = true;
-            account = result.get();
+        Optional<Account> existingAcc = accountRepository.findById(dest);
+        if (!existingAcc.isPresent()) {
+            errorMsg = "Invalid destination account";
+            return errorMsg;
         }
 
         if(!dest.matches("[0-9]+")) {
-            System.out.println("Invalid account");
-            isError = true;
+            errorMsg = "Invalid destination account";
+            return errorMsg;
         } else {
-            if(!isAccountExist) {
-                System.out.println("Invalid account");
-                isError = true;
-            } else if(!amount.matches("[0-9]+")) {
-                System.out.println("Invalid amount");
-                isError = true;
+             if(!amount.matches("[0-9]+")) {
+                errorMsg = "Invalid amount";
+                return errorMsg;
             }else {
                 if(amount.length() > 10) {
                     amount = amount.substring(1,10);
                 }
                 int amountNumb = Integer.valueOf(amount);
                 if(amountNumb > 1000) {
-                    System.out.println("Maximum amount to withdraw is $1000");
-                    isError = true;
+                    errorMsg = "Maximum amount to withdraw is $1000";
+                    return errorMsg;
                 }else if (amountNumb<1) {
-                    System.out.println("Minimum amount to withdraw is $1");
-                    isError = true;
+                    errorMsg = "Minimum amount to withdraw is $1";
+                    return errorMsg;
                 }
-//                else if(amountNumb > loggedAccount.getBalance()) {
-//                    System.out.println("Insufficient balance $"+amountNumb);
-//                    isError = true;
-//                }
+                else if(amountNumb > balance) {
+                    errorMsg = "Insufficient balance $"+amountNumb;
+                    return errorMsg;
+                }
             }
         }
-        if(isError) {
-//            TransactionScreen transactionScreen = new TransactionScreen();
-//            transactionScreen.showScreen();
-        }
-        return account;
+        return errorMsg;
     }
 }

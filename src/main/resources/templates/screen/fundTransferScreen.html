@@ -19,4 +19,26 @@
     </div>
     </div>
 </nav>
+<div class="container-fluid">
+    <div th:if="${account} != null">
+        <h3 th:text="'Welcome back, '+${account.name}+'!'"></h3>
+        <h5 th:text="${#dates.format(#dates.createNow(), 'dd MMM yyyy HH:mm')}"></h5>
+    </div>
+    <form th:action="@{/process-fund-transfer}" method="POST">
+        <div class="input-group">
+            <label class="form-check-label">Enter Destination account number</label>
+            <input type="text" class="form-control" id="descAcc" name="descAcc">
+        </div>
+        <div class="input-group">
+            <label class="form-check-label">Enter transfer amount $</label>
+            <input type="text" class="form-control" id="transferAmount" name="transferAmount">
+        </div>
+        <br>
+        <input type="submit" value="Process" class="btn btn-primary">
+        <a class="btn btn-warning" href="/transaction">Back to Transaction Menu</a>
+    </form><br>
+    <div th:if="${errorMessage} != null" class="alert alert-danger" >
+        <p th:text="${errorMessage}"></p>
+    </div>
+</div>
 </body>

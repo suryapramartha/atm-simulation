@@ -5,6 +5,7 @@ import com.mitrais.atm.model.Transaction;
 import com.mitrais.atm.service.AccountService;
 import com.mitrais.atm.service.DataValidationService;
 import com.mitrais.atm.service.TransactionServiceImpl;
+import com.mitrais.atm.util.RandomNumberGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,6 +21,9 @@ public class TransactionController {
 
     @Autowired
     private DataValidationService dataValidationService;
+
+    @Autowired
+    private RandomNumberGenerator randomNumberGenerator;
 
     @Autowired
     private TransactionServiceImpl transactionService;
@@ -40,6 +44,29 @@ public class TransactionController {
         } else {
             return processWithdraw(amountInput, model);
         }
+    }
+
+    @PostMapping(value = "/process-fund-transfer")
+    public String processFundTransfer(@RequestParam(value = "descAcc") String descAcc,
+                                      @RequestParam(value = "transferAmount") String amount,
+                                      Model model) throws Exception {
+        String errorMessage = dataValidationService.checkFundInputData(descAcc, amount);
+        if (!(errorMessage == null)) {
+            model.addAttribute("account", accountService.getLoggedAccount());
+            model.addAttribute("errorMessage", errorMessage);
+            return "screen/fundTransferScreen";
+        }else {
+            Account account = accountService.getLoggedAccount();
+            Account destAccount = accountService.getAccountByAccNumber(descAcc);
+            String refNo = randomNumberGenerator.getRandom6DigitNumber();
+            Transaction newFundTransferTrans = new Transaction(account.getAccNumber(), descAcc, FUND_TRANSFER, LocalDate.now(), amount, account.getBalance(), refNo);
+            Account updatedAccount = transactionService.processFundTransfer(newFundTransferTrans, account, destAccount);
+            accountService.setLoggedAccount(updatedAccount);
+            model.addAttribute("account", accountService.getLoggedAccount());
+            model.addAttribute("transaction", newFundTransferTrans);
+            return "screen/summaryScreen";
+        }
+
     }
 
     private String processWithdraw(String amount, Model model) {

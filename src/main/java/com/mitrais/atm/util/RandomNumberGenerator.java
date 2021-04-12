@@ -1,7 +1,10 @@
 package com.mitrais.atm.util;
 
+import org.springframework.stereotype.Service;
+
 import java.util.Random;
 
+@Service
 public class RandomNumberGenerator {
     public RandomNumberGenerator(){}
 

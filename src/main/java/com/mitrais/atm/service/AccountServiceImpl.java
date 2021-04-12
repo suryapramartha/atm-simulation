@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -32,6 +33,15 @@ public class AccountServiceImpl implements AccountService{
     @Override
     public void setLoggedAccount(Account account) {
         loggedAccount = account;
+    }
+
+    @Override
+    public Account getAccountByAccNumber(String accNumber) throws Exception {
+        Optional<Account> existingAcc = accountRepository.findById(accNumber);
+        if(!existingAcc.isPresent()) {
+            throw new Exception("Data not found");
+        }
+        return existingAcc.get();
     }
 
     private Function<List<String>, Account> mapToAccount = line -> {

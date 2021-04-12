@@ -29,7 +29,13 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
+    @Transactional
     public Account processFundTransfer(Transaction transaction, Account origin, Account dest) {
-        return null;
+        origin.setBalance(origin.getBalance() - Integer.parseInt(transaction.getAmount()));
+        dest.setBalance(dest.getBalance() + Integer.parseInt(transaction.getAmount()));
+        accountRepository.save(origin);
+        accountRepository.save(dest);
+        transactionRepository.save(transaction);
+        return origin;
     }
 }

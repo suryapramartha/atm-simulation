@@ -6,5 +6,6 @@ public interface AccountService {
     Account getAccount(String accNumber, String accPin);
     Account getLoggedAccount();
     void setLoggedAccount(Account account);
+    Account getAccountByAccNumber(String accNumber) throws Exception;
 
 }
