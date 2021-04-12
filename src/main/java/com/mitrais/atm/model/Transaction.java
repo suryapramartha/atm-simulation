@@ -21,6 +21,7 @@ public class Transaction {
     private LocalDate transactionDate;
     private String amount;
     private int balance;
+    private String refNo;
 
     private static List<Transaction> transactions = new ArrayList<>();
 
@@ -34,13 +35,14 @@ public class Transaction {
         this.amount = amount;
         this.balance = balance;
     }
-    public Transaction(String accountNumber,String descAccountNumber, String transactionType, LocalDate transactionDate, String amount, int balance) {
+    public Transaction(String accountNumber, String descAccountNumber, String transactionType, LocalDate transactionDate, String amount, int balance, String refNo) {
         this.accountNumber = accountNumber;
         this.descAccountNumber = descAccountNumber;
         this.transactionType = transactionType;
         this.transactionDate = transactionDate;
         this.amount = amount;
         this.balance = balance;
+        this.refNo = refNo;
     }
 
     public String getAccountNumber() {
@@ -79,6 +81,14 @@ public class Transaction {
         this.transactionId = transactionId;
     }
 
+    public String getRefNo() {
+        return refNo;
+    }
+
+    public void setRefNo(String refNo) {
+        this.refNo = refNo;
+    }
+
     public void setAmount(String amount) {
         this.amount = amount;
     }
@@ -99,13 +109,9 @@ public class Transaction {
         this.descAccountNumber = descAccountNumber;
     }
 
-    public void addTransaction(Account origin, String transactionType, String amount) {
-        Transaction newTransaction = new Transaction(origin.getAccNumber(), transactionType, LocalDate.now(), amount, origin.getBalance());
-        this.transactions.add(newTransaction);
-    }
 
-    public void addTransaction(Account origin, Account dest, String transactionType, String amount) {
-        Transaction newTransaction = new Transaction(origin.getAccNumber(),dest.getAccNumber(), transactionType, LocalDate.now(), amount, origin.getBalance());
+    public void addTransaction(Account origin, Account dest, String transactionType, String amount, String refNo) {
+        Transaction newTransaction = new Transaction(origin.getAccNumber(),dest.getAccNumber(), transactionType, LocalDate.now(), amount, origin.getBalance(), refNo);
         this.transactions.add(newTransaction);
     }
 

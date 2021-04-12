@@ -15,6 +15,7 @@
         desc_account_number varchar(255),
         transaction_date date,
         transaction_type varchar(255),
+        ref_no varchar(255),
         CONSTRAINT pk_transaction PRIMARY KEY (transaction_id)
     );
 

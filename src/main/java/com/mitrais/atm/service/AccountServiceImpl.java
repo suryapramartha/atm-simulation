@@ -12,6 +12,8 @@ import java.util.stream.Collectors;
 @Service
 public class AccountServiceImpl implements AccountService{
 
+    private static Account loggedAccount;
+
     @Autowired
     private AccountRepository accountRepository;
     private static final String CSV_SEPARATOR = ",";
@@ -23,13 +25,13 @@ public class AccountServiceImpl implements AccountService{
     }
 
     @Override
-    public List<Account> getAccountList() {
-        return null;
+    public Account getLoggedAccount() {
+        return loggedAccount;
     }
 
     @Override
-    public void setAccountList(List<Account> accountList) {
-
+    public void setLoggedAccount(Account account) {
+        loggedAccount = account;
     }
 
     private Function<List<String>, Account> mapToAccount = line -> {

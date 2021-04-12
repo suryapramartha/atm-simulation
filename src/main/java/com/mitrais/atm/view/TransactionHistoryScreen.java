@@ -40,8 +40,8 @@ public class TransactionHistoryScreen implements Screen{
 
         switch (choice) {
             case "1": case "2": case "":
-                TransactionScreen transactionScreen = new TransactionScreen();
-                transactionScreen.showScreen();
+//                TransactionScreen transactionScreen = new TransactionScreen();
+//                transactionScreen.showScreen();
             default:
                 this.showScreen();
         }

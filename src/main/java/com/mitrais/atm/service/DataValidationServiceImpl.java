@@ -2,7 +2,6 @@ package com.mitrais.atm.service;
 
 import com.mitrais.atm.model.Account;
 import com.mitrais.atm.repository.AccountRepository;
-import com.mitrais.atm.view.TransactionScreen;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -58,29 +57,34 @@ public class DataValidationServiceImpl implements DataValidationService {
         return error;
     }
 
-    public boolean checkWithdrawAmount(String amount) {
-        boolean isValid = true;
+    @Override
+    public String checkWithdrawAmount(String amount) {
+        String error = null;
+        Account account = accountService.getLoggedAccount();
 
         if(!amount.matches("[0-9]+")){
-            System.out.println("Invalid amount");
-            isValid = false;
+            error = "Invalid amount";
+            return error;
         }else {
             int amountNumb = Integer.valueOf(amount);
             if(amountNumb > 1000) {
-                System.out.println("Maximum amount to withdraw is $1000");
-                isValid = false;
+                error = "Maximum amount to withdraw is $1000";
+                return error;
             }else if (amountNumb%10 != 0) {
-                System.out.println("Invalid amount");
-                isValid = false;
+                error = "Invalid amount";
+                return error;
+            }else if (amountNumb > account.getBalance()) {
+                error = "Insufficient Balance $"+amountNumb;
+                return error;
             }
         }
-        return isValid;
+        return error;
     }
 
     public Account checkFundInputData(String dest, String amount) {
 
         Account account = null;
-        List<Account> accountList = accountService.getAccountList();
+        //List<Account> accountList = accountService.getAccountList();
         boolean isAccountExist = false;
         boolean isError = false;
 
@@ -122,8 +126,8 @@ public class DataValidationServiceImpl implements DataValidationService {
             }
         }
         if(isError) {
-            TransactionScreen transactionScreen = new TransactionScreen();
-            transactionScreen.showScreen();
+//            TransactionScreen transactionScreen = new TransactionScreen();
+//            transactionScreen.showScreen();
         }
         return account;
     }

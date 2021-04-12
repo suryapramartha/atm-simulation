@@ -19,7 +19,6 @@ public class LoginController {
     @Autowired
     private AccountService accountService;
 
-
     @PostMapping("/login")
     public String login(
             @RequestParam(value = "accNumber") String accNumber,
@@ -28,6 +27,7 @@ public class LoginController {
         String errorMsg = dataValidationService.checkLoginCredential(accNumber, accPin);
         if (errorMsg == null) {
             Account account = accountService.getAccount(accNumber, accPin);
+            accountService.setLoggedAccount(account);
             model.addAttribute("account", account);
             return "screen/transactionScreen";
         } else {
