@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Controller
 public class TransactionController {
@@ -67,6 +68,21 @@ public class TransactionController {
             return "screen/summaryScreen";
         }
 
+    }
+    @PostMapping(value = "/filterByDate")
+    public String filterByDate(@RequestParam(value = "dateFilter", required = false) String date,
+                                      Model model) throws Exception {
+
+        if(!date.isEmpty()) {
+            Account account = accountService.getLoggedAccount();
+            LocalDate query = LocalDate.parse(date);
+            List<Transaction> transactionList = transactionService.getTransactionHistoryOnDate(account.getAccNumber(),query);
+            model.addAttribute("account", account);
+            model.addAttribute("transactionList", transactionList);
+            return "screen/transactionHistoryScreen";
+        } else {
+            return "redirect:histories";
+        }
     }
 
     private String processWithdraw(String amount, Model model) {

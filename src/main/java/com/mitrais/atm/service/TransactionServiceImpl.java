@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -43,5 +44,10 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public List<Transaction> getTransactionHistory(String accNumber) {
         return transactionRepository.findByAccountNumber(accNumber);
+    }
+
+    @Override
+    public List<Transaction> getTransactionHistoryOnDate(String accNumber, LocalDate date) {
+        return transactionRepository.findByAccountNumberAndTransactionDate(accNumber,date);
     }
 }
