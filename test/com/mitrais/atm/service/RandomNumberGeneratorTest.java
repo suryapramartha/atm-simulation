@@ -1,3 +1,5 @@
+package com.mitrais.atm.service;
+
 import com.mitrais.atm.util.RandomNumberGenerator;
 import org.junit.Before;
 import org.junit.Test;

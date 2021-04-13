@@ -1,3 +1,5 @@
+package com.mitrais.atm.service;
+
 import com.mitrais.atm.model.Account;
 import com.mitrais.atm.repository.AccountRepository;
 import com.mitrais.atm.service.AccountServiceImpl;
@@ -9,7 +11,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
-public class DataValidationTest {
+public class DataValidationServiceImplTest {
     private static final String FILE_INPUT_PATH = "resources/ATM-accounts.csv";
 
     String ERROR_INVALID_ACCOUNT = "Invalid account";
