@@ -21,10 +21,21 @@
 </nav>
 <div class="container-fluid">
     <div th:if="${account} != null">
-        <h3 th:text="'Account name : '+${account.name}"></h3>
-        <h3 th:text="'Transaction Date : '+${#dates.format(#dates.createNow(), 'dd MMM yyyy HH:mm')}"></h3>
-        <h3 th:text="'Withdraw amount : $'+${transaction.amount}"></h3>
-        <h3 th:text="'Balance : $'+${account.balance}"></h3>
+        <div th:if="${transaction.transactionType} == 'WITHDRAW'">
+            <h2>Withdraw Summary</h2>
+            <h3 th:text="'Account name : '+${account.name}"></h3>
+            <h3 th:text="'Transaction Date : '+${#dates.format(#dates.createNow(), 'dd MMM yyyy HH:mm')}"></h3>
+            <h3 th:text="'Withdraw amount : $'+${transaction.amount}"></h3>
+            <h3 th:text="'Balance : $'+${account.balance}"></h3>
+        </div>
+
+        <div th:if="${transaction.transactionType} == 'FUND TRANSFER'">
+            <h2>Fund Transfer Summary</h2>
+            <h3 th:text="'Destination Account : '+${transaction.descAccountNumber}"></h3>
+            <h3 th:text="'Transfer Amount : $'+${transaction.amount}"></h3>
+            <h3 th:text="'Reference Number : '+${transaction.refNo}"></h3>
+            <h3 th:text="'Balance : $'+${account.balance}"></h3>
+        </div>
     </div>
     <br>
     <a class="btn btn-warning" href="/transaction">Transaction Menu</a>

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
 
 @Service
 public class TransactionServiceImpl implements TransactionService {
@@ -37,5 +38,10 @@ public class TransactionServiceImpl implements TransactionService {
         accountRepository.save(dest);
         transactionRepository.save(transaction);
         return origin;
+    }
+
+    @Override
+    public List<Transaction> getTransactionHistory(String accNumber) {
+        return transactionRepository.findByAccountNumber(accNumber);
     }
 }

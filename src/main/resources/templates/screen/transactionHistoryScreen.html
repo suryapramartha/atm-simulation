@@ -19,4 +19,33 @@
     </div>
     </div>
 </nav>
+<div class="container-fluid">
+    <div th:if="${account} != null">
+        <h3 th:text="'Account Name : '+${account.name}"></h3>
+        <h3 th:text="'Account Number : '+${account.accNumber}"></h3>
+        <h3 th:text="${#dates.format(#dates.createNow(), 'dd MMM yyyy HH:mm')}"></h3>
+    </div>
+    <br>
+    <a class="btn btn-warning" href="/transaction">Transaction Menu</a>
+    <hr>
+    <table border="1" class="table table-striped">
+        <tr>
+            <th>ID</th>
+            <th>Transaction Date</th>
+            <th>Transaction Type</th>
+            <th>Destination Account</th>
+            <th>Amount</th>
+            <th>Balance</th>
+        </tr>
+        <tr th:each ="x : ${transactionList}">
+            <td th:text="${x.transactionId}"></td>
+            <td th:text="${x.transactionDate}"></td>
+            <td th:text="${x.transactionType}"></td>
+            <td th:text="${x.descAccountNumber}"></td>
+            <td th:text="'$'+${x.amount}"></td>
+            <td th:text="'$'+${x.balance}"></td>
+        </tr>
+    </table>
+
+</div>
 </body>
