@@ -21,7 +21,9 @@ public class IndexController {
     private TransactionService transactionService;
 
     @GetMapping
-    public String viewMainScreen() {
+    public String viewMainScreen(Model model) {
+        accountService.setLoggedAccount(null);
+        model.addAttribute("account", null);
         return "index";
     }
 
