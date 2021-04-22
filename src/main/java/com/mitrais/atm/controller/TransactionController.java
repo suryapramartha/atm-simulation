@@ -13,7 +13,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 public class TransactionController {
@@ -37,13 +40,13 @@ public class TransactionController {
                                   @RequestParam(value = "customWithdraw", required = false) String customAmount,
                                   Model model) {
         String amountInput = amount.equals("custom") ? customAmount : amount;
-        String errorMessage = dataValidationService.checkWithdrawAmount(amountInput);
-        if (!(errorMessage == null)) {
+        try {
+             dataValidationService.checkWithdrawAmount(amountInput);
+             return processWithdraw(amountInput, model);
+        } catch (Exception e) {
             model.addAttribute("account", accountService.getLoggedAccount());
-            model.addAttribute("errorMessage", errorMessage);
+            model.addAttribute("errorMessage", e.getMessage());
             return "screen/withdrawScreen";
-        } else {
-            return processWithdraw(amountInput, model);
         }
     }
 
@@ -51,12 +54,9 @@ public class TransactionController {
     public String processFundTransfer(@RequestParam(value = "descAcc") String descAcc,
                                       @RequestParam(value = "transferAmount") String amount,
                                       Model model) throws Exception {
-        String errorMessage = dataValidationService.checkFundInputData(descAcc, amount);
-        if (!(errorMessage == null)) {
-            model.addAttribute("account", accountService.getLoggedAccount());
-            model.addAttribute("errorMessage", errorMessage);
-            return "screen/fundTransferScreen";
-        }else {
+        try {
+            dataValidationService.checkFundInputData(descAcc, amount);
+
             Account account = accountService.getLoggedAccount();
             Account destAccount = accountService.getAccountByAccNumber(descAcc);
             String refNo = randomNumberGenerator.getRandom6DigitNumber();
@@ -66,23 +66,32 @@ public class TransactionController {
             model.addAttribute("account", accountService.getLoggedAccount());
             model.addAttribute("transaction", newFundTransferTrans);
             return "screen/summaryScreen";
+        }catch (Exception e) {
+            model.addAttribute("account", accountService.getLoggedAccount());
+            model.addAttribute("errorMessage", e.getMessage());
+            return "screen/fundTransferScreen";
         }
-
     }
     @PostMapping(value = "/filterByDate")
     public String filterByDate(@RequestParam(value = "dateFilter", required = false) String date,
+                               @RequestParam(value = "limitFilter", required = false) int limit,
                                       Model model) throws Exception {
-
-        if(!date.isEmpty()) {
+            List<Transaction> transactionList;
+            Map<String, String> input = new HashMap<>();
+            input.put("limit", String.valueOf(limit));
             Account account = accountService.getLoggedAccount();
-            LocalDate query = LocalDate.parse(date);
-            List<Transaction> transactionList = transactionService.getTransactionHistoryOnDate(account.getAccNumber(),query);
+            if (date.isEmpty()) {
+                input.put("date", "ALL");
+                transactionList = transactionService.getTransactionHistory(account.getAccNumber(), limit);
+            }else {
+                LocalDate query = LocalDate.parse(date);
+                input.put("date", query.toString());
+                transactionList = transactionService.getTransactionHistoryOnDate(account.getAccNumber(),query, limit);
+            }
+            model.addAttribute("filterInput", input);
             model.addAttribute("account", account);
             model.addAttribute("transactionList", transactionList);
             return "screen/transactionHistoryScreen";
-        } else {
-            return "redirect:histories";
-        }
     }
 
     private String processWithdraw(String amount, Model model) {

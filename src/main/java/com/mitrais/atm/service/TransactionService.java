@@ -9,6 +9,6 @@ import java.util.List;
 public interface TransactionService {
     Account processWithdraw(Transaction transaction, Account origin);
     Account processFundTransfer(Transaction transaction, Account origin, Account dest);
-    List<Transaction> getTransactionHistory(String accNumber);
-    List<Transaction> getTransactionHistoryOnDate(String accNumber, LocalDate date);
+    List<Transaction> getTransactionHistory(String accNumber, int limit);
+    List<Transaction> getTransactionHistoryOnDate(String accNumber, LocalDate date, int limit);
 }

@@ -58,47 +58,40 @@ public class DataValidationServiceImpl implements DataValidationService {
     }
 
     @Override
-    public String checkWithdrawAmount(String amount) {
+    public String checkWithdrawAmount(String amount) throws Exception {
         String error = null;
         Account account = accountService.getLoggedAccount();
 
         if(!amount.matches("[0-9]+")){
             error = "Invalid amount";
-            return error;
         }else {
             int amountNumb = Integer.valueOf(amount);
             if(amountNumb > 1000) {
                 error = "Maximum amount to withdraw is $1000";
-                return error;
             }else if (amountNumb%10 != 0) {
                 error = "Invalid amount";
-                return error;
             }else if (amountNumb > account.getBalance()) {
                 error = "Insufficient Balance $"+amountNumb;
-                return error;
             }
         }
-        return error;
+        if(error != null) throw new Exception(error);
+        return null;
     }
 
     @Override
-    public String checkFundInputData(String dest, String amount) {
+    public String checkFundInputData(String dest, String amount) throws Exception {
         String errorMsg = null;
         int balance = accountService.getLoggedAccount().getBalance();
 
         Optional<Account> existingAcc = accountRepository.findById(dest);
         if (!existingAcc.isPresent()) {
             errorMsg = "Invalid destination account";
-            return errorMsg;
         }
-
         if(!dest.matches("[0-9]+")) {
             errorMsg = "Invalid destination account";
-            return errorMsg;
         } else {
              if(!amount.matches("[0-9]+")) {
                 errorMsg = "Invalid amount";
-                return errorMsg;
             }else {
                 if(amount.length() > 10) {
                     amount = amount.substring(1,10);
@@ -106,17 +99,15 @@ public class DataValidationServiceImpl implements DataValidationService {
                 int amountNumb = Integer.valueOf(amount);
                 if(amountNumb > 1000) {
                     errorMsg = "Maximum amount to withdraw is $1000";
-                    return errorMsg;
                 }else if (amountNumb<1) {
                     errorMsg = "Minimum amount to withdraw is $1";
-                    return errorMsg;
                 }
                 else if(amountNumb > balance) {
                     errorMsg = "Insufficient balance $"+amountNumb;
-                    return errorMsg;
                 }
             }
         }
-        return errorMsg;
+        if(errorMsg != null) throw new Exception(errorMsg);
+        return null;
     }
 }

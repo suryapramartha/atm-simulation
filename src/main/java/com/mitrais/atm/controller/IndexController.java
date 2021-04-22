@@ -41,7 +41,7 @@ public class IndexController {
     @GetMapping(value = "/histories")
     public String viewTransactionHistoryScreen(Model model){
         Account account = accountService.getLoggedAccount();
-        List<Transaction> listTransaction = transactionService.getTransactionHistory(account.getAccNumber());
+        List<Transaction> listTransaction = transactionService.getTransactionHistory(account.getAccNumber(), 10);
         model.addAttribute("account", account);
         model.addAttribute("transactionList", listTransaction);
         return "screen/transactionHistoryScreen";}

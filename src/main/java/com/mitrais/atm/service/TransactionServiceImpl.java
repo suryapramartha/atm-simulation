@@ -4,13 +4,13 @@ import com.mitrais.atm.model.Account;
 import com.mitrais.atm.model.Transaction;
 import com.mitrais.atm.repository.AccountRepository;
 import com.mitrais.atm.repository.TransactionRepository;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class TransactionServiceImpl implements TransactionService {
@@ -22,7 +22,6 @@ public class TransactionServiceImpl implements TransactionService {
     private TransactionRepository transactionRepository;
 
     @Override
-    @Transactional
     public Account processWithdraw(Transaction transaction, Account origin) {
         origin.setBalance(origin.getBalance() - Integer.parseInt(transaction.getAmount()));
         accountRepository.save(origin);
@@ -31,7 +30,6 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    @Transactional
     public Account processFundTransfer(Transaction transaction, Account origin, Account dest) {
         origin.setBalance(origin.getBalance() - Integer.parseInt(transaction.getAmount()));
         dest.setBalance(dest.getBalance() + Integer.parseInt(transaction.getAmount()));
@@ -42,12 +40,17 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public List<Transaction> getTransactionHistory(String accNumber) {
-        return transactionRepository.findByAccountNumber(accNumber);
+    public List<Transaction> getTransactionHistory(String accNumber, int limit) {
+        return transactionRepository.findByAccountNumber(accNumber).stream()
+                .limit(limit).sorted(Comparator.comparing(Transaction::getTransactionDate).reversed())
+                .collect(Collectors.toList());
     }
 
     @Override
-    public List<Transaction> getTransactionHistoryOnDate(String accNumber, LocalDate date) {
-        return transactionRepository.findByAccountNumberAndTransactionDate(accNumber,date);
+    public List<Transaction> getTransactionHistoryOnDate(String accNumber, LocalDate date, int limit) {
+        return transactionRepository.findByAccountNumberAndTransactionDate(accNumber,date).stream()
+                .limit(limit).sorted(Comparator.comparing(Transaction::getTransactionDate).reversed())
+                .collect(Collectors.toList());
     }
+
 }

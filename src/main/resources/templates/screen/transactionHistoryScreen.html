@@ -23,7 +23,6 @@
     <div th:if="${account} != null">
         <h3 th:text="'Account Name : '+${account.name}"></h3>
         <h3 th:text="'Account Number : '+${account.accNumber}"></h3>
-        <h3 th:text="${#dates.format(#dates.createNow(), 'dd MMM yyyy HH:mm')}"></h3>
     </div>
     <br>
     <form th:action="@{/filterByDate}" method="POST">
@@ -31,10 +30,18 @@
             <h5>Filter by Date</h5>
             <input type="Date"  name="dateFilter" id="dateFilter">
         </div>
+        <div class="input-group">
+            <h5>Limit</h5>
+            <input type="number" name="limitFilter" id="limitFilter" value="0" required>
+        </div>
         <br>
         <input type="submit" value="Filter" class="btn btn-primary">
     </form>
     <hr>
+    <div th:if="${filterInput} != null" style="text-align: center; border: 1px">
+        <h3>Showing data with filter</h3>
+        <h4 th:text="'Date : '+${filterInput.get('date')}+' , Limit : '+${filterInput.get('limit')}"></h4>
+    </div>
     <table border="1" class="table table-striped">
         <tr>
             <th>ID</th>
