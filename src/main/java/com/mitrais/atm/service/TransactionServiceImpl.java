@@ -41,15 +41,15 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public List<Transaction> getTransactionHistory(String accNumber, int limit) {
-        return transactionRepository.findByAccountNumber(accNumber).stream()
-                .limit(limit).sorted(Comparator.comparing(Transaction::getTransactionDate).reversed())
+        return transactionRepository.findByAccountNumberOrderByTransactionDateDesc(accNumber).stream()
+                .limit(limit)
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<Transaction> getTransactionHistoryOnDate(String accNumber, LocalDate date, int limit) {
-        return transactionRepository.findByAccountNumberAndTransactionDate(accNumber,date).stream()
-                .limit(limit).sorted(Comparator.comparing(Transaction::getTransactionDate).reversed())
+        return transactionRepository.findByAccountNumberAndTransactionDateOrderByTransactionDateDesc(accNumber,date).stream()
+                .limit(limit)
                 .collect(Collectors.toList());
     }
 

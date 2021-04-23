@@ -93,7 +93,7 @@ public class TransactionServiceImpltest {
     @Test
     public void givenValidInputWhenGetTransactionHistoryThenReturnListOfTransaction() {
         int limit = 10;
-        when(transactionRepository.findByAccountNumber(anyString())).thenReturn(transactionList);
+        when(transactionRepository.findByAccountNumberOrderByTransactionDateDesc(anyString())).thenReturn(transactionList);
 
         List<Transaction> transactions = transactionService.getTransactionHistory("112233", limit);
         assertThat(transactions.size(), is(limit));
@@ -103,7 +103,7 @@ public class TransactionServiceImpltest {
     public void givenValidInputWhenGetTransactionHistoryWithDateThenReturnListOfTransaction() {
         int limit = 10;
         LocalDate date = LocalDate.now();
-        when(transactionRepository.findByAccountNumberAndTransactionDate(anyString(), any(LocalDate.class))).thenReturn(transactionList);
+        when(transactionRepository.findByAccountNumberAndTransactionDateOrderByTransactionDateDesc(anyString(), any(LocalDate.class))).thenReturn(transactionList);
 
         List<Transaction> transactions = transactionService.getTransactionHistoryOnDate("112233",date, limit);
         assertThat(transactions.size(), is(limit));

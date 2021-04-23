@@ -9,6 +9,6 @@ import java.util.List;
 
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction,Integer> {
-    List<Transaction> findByAccountNumber(String accNumber);
-    List<Transaction> findByAccountNumberAndTransactionDate(String accNumber,LocalDate date);
+    List<Transaction> findByAccountNumberOrderByTransactionDateDesc(String accNumber);
+    List<Transaction> findByAccountNumberAndTransactionDateOrderByTransactionDateDesc(String accNumber,LocalDate date);
 }
