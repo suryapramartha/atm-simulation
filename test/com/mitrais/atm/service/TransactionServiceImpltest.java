@@ -12,10 +12,14 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -32,6 +36,7 @@ public class TransactionServiceImpltest {
     private static Account origin;
     private static Account dest;
     private static Transaction transaction;
+    private static List<Transaction> transactionList;
 
     @BeforeClass
     public static void setUp() {
@@ -47,12 +52,18 @@ public class TransactionServiceImpltest {
         dest.setName("dest");
         dest.setBalance(50);
 
+
         transaction = new Transaction();
         transaction.setAccountNumber(origin.getAccNumber());
         transaction.setDescAccountNumber(dest.getAccNumber());
         transaction.setAmount("50");
         transaction.setRefNo("999999");
         transaction.setTransactionDate(LocalDate.now());
+
+        transactionList = IntStream
+                .range(0, 10)
+                .mapToObj(i -> transaction)
+                .collect(Collectors.toList());
     }
 
     @Test
@@ -77,5 +88,24 @@ public class TransactionServiceImpltest {
         assertThat(updatedAcc.getBalance(), is(balanceOriginBeforeTransaction - Integer.parseInt(transaction.getAmount())));
         assertThat(dest.getBalance(), is(balanceDestBeforeTransaction + Integer.parseInt(transaction.getAmount())));
 
+    }
+
+    @Test
+    public void givenValidInputWhenGetTransactionHistoryThenReturnListOfTransaction() {
+        int limit = 10;
+        when(transactionRepository.findByAccountNumber(anyString())).thenReturn(transactionList);
+
+        List<Transaction> transactions = transactionService.getTransactionHistory("112233", limit);
+        assertThat(transactions.size(), is(limit));
+    }
+
+    @Test
+    public void givenValidInputWhenGetTransactionHistoryWithDateThenReturnListOfTransaction() {
+        int limit = 10;
+        LocalDate date = LocalDate.now();
+        when(transactionRepository.findByAccountNumberAndTransactionDate(anyString(), any(LocalDate.class))).thenReturn(transactionList);
+
+        List<Transaction> transactions = transactionService.getTransactionHistoryOnDate("112233",date, limit);
+        assertThat(transactions.size(), is(limit));
     }
 }

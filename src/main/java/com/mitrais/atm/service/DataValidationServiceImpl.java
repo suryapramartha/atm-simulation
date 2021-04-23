@@ -11,7 +11,8 @@ import java.util.function.Predicate;
 
 @Service
 public class DataValidationServiceImpl implements DataValidationService {
-    AccountService accountService = new AccountServiceImpl();
+    @Autowired
+    private AccountService accountService;
 
     @Autowired
     private AccountRepository accountRepository;

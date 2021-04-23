@@ -2,38 +2,54 @@ package com.mitrais.atm.service;
 
 import com.mitrais.atm.model.Account;
 import com.mitrais.atm.repository.AccountRepository;
-import com.mitrais.atm.service.AccountServiceImpl;
-import com.mitrais.atm.service.DataValidationServiceImpl;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static org.junit.Assert.assertEquals;
 
 public class DataValidationServiceImplTest {
-    private static final String FILE_INPUT_PATH = "resources/ATM-accounts.csv";
 
-    String ERROR_INVALID_ACCOUNT = "Invalid account";
-    String ERROR_INVALID_AMOUNT = "Invalid amount";
-    String ERROR_MAX_WITHDRAW_AMOUNT = "Maximum amount to withdraw is $1000";
-    String ERROR_MIN_WITHDRAW_AMOUNT = "Minimum amount to withdraw is $1";
+    @InjectMocks
+    private DataValidationService dataValidationService;
+
+    @InjectMocks
+    private AccountService accountService;
+
+    @Mock
+    private AccountRepository accountRepository;
+
+    private static Account origin;
+    private static Account loggedAccount;
+    private static List<Account> accountList ;
+    private static Account dest;
+
     String errorMessage;
     boolean isLoggedIn;
-    Account accountData;
-    List<Account> accounts;
-
-    Account result;
-    AccountServiceImpl accountServiceImpl;
 
     @Before
     public void setUp() throws Exception {
-        errorMessage = null;
-        isLoggedIn = false;
-        accountData = null;
+        origin = new Account();
+        origin.setAccNumber("121212");
+        origin.setBalance(100);
+        origin.setName("test");
+        origin.setPin("111111");
 
-        result = null;
-        AccountServiceImpl accountServiceImpl = new AccountServiceImpl();
+        accountList = IntStream
+                .range(0, 10)
+                .mapToObj(i -> origin)
+                .collect(Collectors.toList());
+
+        loggedAccount = new Account();
+        loggedAccount.setAccNumber("123456");
+        loggedAccount.setPin("654321");
+        loggedAccount.setName("loggedAccount");
+        loggedAccount.setBalance(100);
     }
 
 
@@ -58,11 +74,11 @@ public class DataValidationServiceImplTest {
     }
 
 //    @Test
-//    public void checkWithdrawAmountDidSuccess() {
-//        DataValidationServiceImpl validation = new DataValidationServiceImpl();
-//        String amount = "900";
-//        boolean result = validation.checkWithdrawAmount(amount);
-//        assertEquals(result, null);
+//    public void checkWithdrawAmountDidSuccess() throws Exception {
+//        when(accountService.getLoggedAccount()).thenReturn(loggedAccount);
+//        String amount = "50";
+//        errorMessage = dataValidationService.checkWithdrawAmount(amount);
+//        assertEquals(errorMessage, null);
 //    }
 
 //    @Test
