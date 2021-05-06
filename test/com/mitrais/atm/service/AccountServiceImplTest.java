@@ -2,6 +2,7 @@ package com.mitrais.atm.service;
 
 import com.mitrais.atm.model.Account;
 import com.mitrais.atm.repository.AccountRepository;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,7 +26,7 @@ public class AccountServiceImplTest {
 
     private static Account account;
 
-    @BeforeClass
+    @Before
     public static void setUp() {
         account = new Account();
         account.setAccNumber("121212");

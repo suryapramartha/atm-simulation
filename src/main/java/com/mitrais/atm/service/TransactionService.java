@@ -5,10 +5,11 @@ import com.mitrais.atm.model.Transaction;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 public interface TransactionService {
-    Account processWithdraw(Transaction transaction, Account origin);
-    Account processFundTransfer(Transaction transaction, Account origin, Account dest);
+    Map<String, Object> processWithdraw(String amount) throws Exception;
+    Map<String,Object> processFundTransfer(String accDest, String amount) throws Exception;
     List<Transaction> getTransactionHistory(String accNumber, int limit);
     List<Transaction> getTransactionHistoryOnDate(String accNumber, LocalDate date, int limit);
 }

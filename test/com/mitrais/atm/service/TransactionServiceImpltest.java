@@ -4,7 +4,8 @@ import com.mitrais.atm.model.Account;
 import com.mitrais.atm.model.Transaction;
 import com.mitrais.atm.repository.AccountRepository;
 import com.mitrais.atm.repository.TransactionRepository;
-import org.junit.BeforeClass;
+import com.mitrais.atm.util.RandomNumberGenerator;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -13,6 +14,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -28,18 +30,27 @@ public class TransactionServiceImpltest {
     private TransactionServiceImpl transactionService;
 
     @Mock
+    private AccountServiceImpl accountService;
+
+    @Mock
+    private DataValidationService dataValidationService;
+
+    @Mock
     private TransactionRepository transactionRepository;
 
     @Mock
     private AccountRepository accountRepository;
+
+    @Mock
+    private RandomNumberGenerator randomNumberGenerator;
 
     private static Account origin;
     private static Account dest;
     private static Transaction transaction;
     private static List<Transaction> transactionList;
 
-    @BeforeClass
-    public static void setUp() {
+    @Before
+    public void setUp() {
         origin = new Account();
         origin.setAccNumber("111111");
         origin.setPin("111111");
@@ -52,6 +63,7 @@ public class TransactionServiceImpltest {
         dest.setName("dest");
         dest.setBalance(50);
 
+        accountService.setLoggedAccount(origin);
 
         transaction = new Transaction();
         transaction.setAccountNumber(origin.getAccNumber());
@@ -67,23 +79,35 @@ public class TransactionServiceImpltest {
     }
 
     @Test
-    public void givenValidInputWhenProcessWithdrawThenReturnAccount() {
+    public void givenValidInputWhenProcessWithdrawThenReturnAccount() throws Exception {
         int balanceBeforeTransaction = origin.getBalance();
-        when(accountRepository.save(any(Account.class))).thenReturn(origin);
-        when(transactionRepository.save(any(Transaction.class))).thenReturn(transaction);
-        Account updatedAcc = transactionService.processWithdraw(transaction, origin);
+        String amount = "10";
+        when(accountService.getLoggedAccount()).thenReturn(origin);
+        when(dataValidationService.checkWithdrawAmount(amount)).thenReturn(null);
+        Map<String, Object> result = transactionService.processWithdraw(amount);
+
+        Account updatedAcc = (Account) result.get("account");
+        Transaction transaction = (Transaction) result.get("transaction");
 
         assertThat(updatedAcc.getBalance(), is(balanceBeforeTransaction - Integer.parseInt(transaction.getAmount())));
     }
 
     @Test
-    public void givenValidInputWhenProcessFundTransferThenReturnAccount() {
+    public void givenValidInputWhenProcessFundTransferThenReturnAccount() throws Exception {
+        String amount = "10";
+        String descAccount = dest.getAccNumber();
         int balanceOriginBeforeTransaction = origin.getBalance();
         int balanceDestBeforeTransaction = dest.getBalance();
 
+        when(accountService.getLoggedAccount()).thenReturn(origin);
+        when(dataValidationService.checkFundInputData(descAccount,amount)).thenReturn(null);
+        when(accountService.getAccountByAccNumber(descAccount)).thenReturn(dest);
+        when(randomNumberGenerator.getRandom6DigitNumber()).thenReturn("111111");
         when(accountRepository.save(any(Account.class))).thenReturn(origin);
-        when(transactionRepository.save(any(Transaction.class))).thenReturn(transaction);
-        Account updatedAcc = transactionService.processFundTransfer(transaction, origin, dest);
+        Map<String, Object> result = transactionService.processFundTransfer(descAccount, amount);
+
+        Account updatedAcc = (Account) result.get("account");
+        Transaction transaction = (Transaction) result.get("transaction");
 
         assertThat(updatedAcc.getBalance(), is(balanceOriginBeforeTransaction - Integer.parseInt(transaction.getAmount())));
         assertThat(dest.getBalance(), is(balanceDestBeforeTransaction + Integer.parseInt(transaction.getAmount())));

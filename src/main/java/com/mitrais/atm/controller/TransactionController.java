@@ -3,9 +3,7 @@ package com.mitrais.atm.controller;
 import com.mitrais.atm.model.Account;
 import com.mitrais.atm.model.Transaction;
 import com.mitrais.atm.service.AccountService;
-import com.mitrais.atm.service.DataValidationService;
 import com.mitrais.atm.service.TransactionServiceImpl;
-import com.mitrais.atm.util.RandomNumberGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,7 +11,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,16 +21,8 @@ public class TransactionController {
     private AccountService accountService;
 
     @Autowired
-    private DataValidationService dataValidationService;
-
-    @Autowired
-    private RandomNumberGenerator randomNumberGenerator;
-
-    @Autowired
     private TransactionServiceImpl transactionService;
 
-    private static final String WITHDRAW = "WITHDRAW";
-    private static final String FUND_TRANSFER = "FUND TRANSFER";
 
     @PostMapping(value = "/process-withdraw")
     public String processWithdraw(@RequestParam(value = "withdrawAmount") String amount,
@@ -41,11 +30,11 @@ public class TransactionController {
                                   Model model) {
         String amountInput = amount.equals("custom") ? customAmount : amount;
         try {
-             dataValidationService.checkWithdrawAmount(amountInput);
-             return processWithdraw(amountInput, model);
+            Map<String, Object> updatedAccount = transactionService.processWithdraw(amountInput);
+            setSuccessModel(model, updatedAccount);
+            return "screen/summaryScreen";
         } catch (Exception e) {
-            model.addAttribute("account", accountService.getLoggedAccount());
-            model.addAttribute("errorMessage", e.getMessage());
+            setErrorModel(model, e.getMessage());
             return "screen/withdrawScreen";
         }
     }
@@ -55,23 +44,26 @@ public class TransactionController {
                                       @RequestParam(value = "transferAmount") String amount,
                                       Model model) throws Exception {
         try {
-            dataValidationService.checkFundInputData(descAcc, amount);
-
-            Account account = accountService.getLoggedAccount();
-            Account destAccount = accountService.getAccountByAccNumber(descAcc);
-            String refNo = randomNumberGenerator.getRandom6DigitNumber();
-            Transaction newFundTransferTrans = new Transaction(account.getAccNumber(), descAcc, FUND_TRANSFER, LocalDate.now(), amount, account.getBalance(), refNo);
-            Account updatedAccount = transactionService.processFundTransfer(newFundTransferTrans, account, destAccount);
-            accountService.setLoggedAccount(updatedAccount);
-            model.addAttribute("account", accountService.getLoggedAccount());
-            model.addAttribute("transaction", newFundTransferTrans);
+            Map<String , Object> updatedAccount = transactionService.processFundTransfer(descAcc, amount);
+            setSuccessModel(model, updatedAccount);
             return "screen/summaryScreen";
         }catch (Exception e) {
-            model.addAttribute("account", accountService.getLoggedAccount());
-            model.addAttribute("errorMessage", e.getMessage());
+            setErrorModel(model, e.getMessage());
             return "screen/fundTransferScreen";
         }
     }
+
+    private void setSuccessModel(Model model, Map<String, Object> updatedAccount) {
+        accountService.setLoggedAccount((Account) updatedAccount.get("account"));
+        model.addAttribute("account", accountService.getLoggedAccount());
+        model.addAttribute("transaction", updatedAccount.get("transaction"));
+    }
+
+    private void setErrorModel(Model model, String errorMsg) {
+        model.addAttribute("account", accountService.getLoggedAccount());
+        model.addAttribute("errorMessage", errorMsg);
+    }
+
     @PostMapping(value = "/filterByDate")
     public String filterByDate(@RequestParam(value = "dateFilter", required = false) String date,
                                @RequestParam(value = "limitFilter", required = false) int limit,
@@ -94,13 +86,4 @@ public class TransactionController {
             return "screen/transactionHistoryScreen";
     }
 
-    private String processWithdraw(String amount, Model model) {
-        Account account = accountService.getLoggedAccount();
-        Transaction newTransaction = new Transaction(account.getAccNumber(), WITHDRAW, LocalDate.now(), amount, account.getBalance());
-        Account updatedAccount = transactionService.processWithdraw(newTransaction, account);
-        accountService.setLoggedAccount(updatedAccount);
-        model.addAttribute("account", accountService.getLoggedAccount());
-        model.addAttribute("transaction", newTransaction);
-        return "screen/summaryScreen";
-    }
 }
