@@ -27,7 +27,7 @@ public class AccountServiceImplTest {
     private static Account account;
 
     @Before
-    public static void setUp() {
+    public void setUp() {
         account = new Account();
         account.setAccNumber("121212");
         account.setBalance(100);

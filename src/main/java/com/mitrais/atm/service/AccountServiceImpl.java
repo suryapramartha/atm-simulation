@@ -17,8 +17,8 @@ public class AccountServiceImpl implements AccountService{
 
     @Autowired
     private AccountRepository accountRepository;
+
     private static final String CSV_SEPARATOR = ",";
-    public AccountServiceImpl() { }
 
     @Override
     public Account getAccount(String accNumber, String accPin) {
