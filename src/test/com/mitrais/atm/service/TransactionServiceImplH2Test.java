@@ -22,26 +22,27 @@ import static org.junit.Assert.assertNotNull;
 @AutoConfigureTestDatabase
 public class TransactionServiceImplH2Test {
 
-    List<Transaction> transactions;
-
     @Autowired
     private TransactionRepository transactionRepository;
 
+    @Autowired
+    private TransactionService transactionService;
+
+    List<Transaction> transactions;
+    private static final String accNumber = "111111";
+    private static final int initialRowData = 50;
+
     @Before
     public void setUp() {
-         for ( int i = 0; i < 10; i++) {
-             Transaction newTrans = new Transaction();
-             newTrans.setAccountNumber("111111");
-             newTrans.setRefNo("111111");
-             newTrans.setTransactionDate(LocalDate.now());
-             newTrans.setAmount("10");
-             newTrans.setTransactionType("WITHDRAW");
-             newTrans.setBalance(10 + i);
-             transactionRepository.save(newTrans);
-         }
-         transactions = transactionRepository.findAll();
+        generateTransaction(accNumber, initialRowData);
     }
 
+    @Test
+    public void checkDataDidSaved() {
+        transactions = transactionRepository.findAll();
+        assertNotNull(transactions);
+        assertEquals(transactions.size(), initialRowData);
+    }
     @Test
     public void givenTransactionRepositoryWhenSavedThenReturnOK() {
         Transaction transaction = transactionRepository.save(new Transaction());
@@ -52,10 +53,36 @@ public class TransactionServiceImplH2Test {
     }
 
     @Test
-    public void testdata() {
-       // List<Transaction> existingTrans = transactionRepository.findAll();
-        assertNotNull(transactions);
-        assertEquals(transactions.size(), 10);
+    public void givenValidInputWhenGetTransactionHistoryThenReturnLastXTransaction() {
+        int limit = 10;
+        List<Transaction> result = transactionService.getTransactionHistory(accNumber, limit);
+        assertEquals(result.size(), limit);
+        // Generate transaction method creates loop date with plusDays(1)
+        // transactionService.getTransactionHistory() is sorted with transactionDate descending
+        assertEquals(result.get(0).getTransactionDate(), LocalDate.now().plusDays(initialRowData - 1));
 
     }
+    @Test
+    public void givenValidInputWhenGetTransactionHistoryOnDateThenReturnLastXTransaction() {
+        int limit = 10;
+        LocalDate date = LocalDate.now();
+        List<Transaction> result = transactionService.getTransactionHistoryOnDate(accNumber,date, limit);
+        assertEquals(result.get(0).getTransactionDate(), date);
+
+    }
+
+    private void generateTransaction(String accNumber, int row) {
+        for ( int i = 0; i < row; i++) {
+            Transaction newTrans = new Transaction();
+            newTrans.setAccountNumber(accNumber);
+            newTrans.setRefNo("111111");
+            newTrans.setTransactionDate(LocalDate.now().plusDays(i));
+            newTrans.setAmount("10");
+            newTrans.setTransactionType("WITHDRAW");
+            newTrans.setBalance(10 + i);
+            transactionRepository.save(newTrans);
+        }
+    }
+
+
 }
