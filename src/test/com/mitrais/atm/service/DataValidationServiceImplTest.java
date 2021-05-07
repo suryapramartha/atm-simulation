@@ -4,21 +4,26 @@ import com.mitrais.atm.model.Account;
 import com.mitrais.atm.repository.AccountRepository;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class DataValidationServiceImplTest {
 
     @InjectMocks
-    private DataValidationService dataValidationService;
+    private DataValidationServiceImpl dataValidationService;
 
-    @InjectMocks
+    @Mock
     private AccountService accountService;
 
     @Mock
@@ -28,9 +33,6 @@ public class DataValidationServiceImplTest {
     private static Account loggedAccount;
     private static List<Account> accountList ;
     private static Account dest;
-
-    String errorMessage;
-    boolean isLoggedIn;
 
     @Before
     public void setUp() throws Exception {
@@ -46,73 +48,76 @@ public class DataValidationServiceImplTest {
                 .collect(Collectors.toList());
 
         loggedAccount = new Account();
-        loggedAccount.setAccNumber("123456");
-        loggedAccount.setPin("654321");
+        loggedAccount.setAccNumber("121212");
+        loggedAccount.setPin("111111");
         loggedAccount.setName("loggedAccount");
         loggedAccount.setBalance(100);
+
+        dest = new Account();
+        dest.setAccNumber("999999");
+        dest.setBalance(100);
+        dest.setName("test");
+        dest.setPin("111111");
+
     }
 
 
     @Test
     public void checkAccountNumberCredentialErrorNumberOnlyAccNumber() {
-        DataValidationServiceImpl datavalidation = new DataValidationServiceImpl();
         String accNumber = "11223f";
         String pin = "012108";
 
-        boolean isError = datavalidation.checkAccountNumberCredential(accNumber);
-        assertEquals(false, isError);
+        boolean isError = dataValidationService.checkAccountNumberCredential(accNumber);
+        assertEquals(isError, false);
     }
 
     @Test
     public void checkLoginCredentialErrorLengthPIN() {
-        DataValidationServiceImpl datavalidation = new DataValidationServiceImpl();
         String accNumber = "112233";
         String pin = "0121084";
 
-        boolean isEror = datavalidation.checkPIN(pin);
+        boolean isEror = dataValidationService.checkPIN(pin);
         assertEquals(false, isEror);
     }
 
-//    @Test
-//    public void checkWithdrawAmountDidSuccess() throws Exception {
-//        when(accountService.getLoggedAccount()).thenReturn(loggedAccount);
-//        String amount = "50";
-//        errorMessage = dataValidationService.checkWithdrawAmount(amount);
-//        assertEquals(errorMessage, null);
-//    }
+    @Test
+    public void givenValidInputWhenCheckLoginCredentialThenReturnNoError() throws Exception {
+        when(accountRepository.findAll()).thenReturn(accountList);
+        String errorMessage = dataValidationService.checkLoginCredential(loggedAccount.getAccNumber(), loggedAccount.getPin());
+        assertEquals(errorMessage, null);
+    }
 
-//    @Test
-//    public void checkWithdrawAmountInvalidAmount() {
-//        DataValidationServiceImpl validation = new DataValidationServiceImpl();
-//        String error = "Invalid amount";
-//        // to check numbers input only
-//        String amount1 = "efbefb";
-//        // to check if amount is able to divided by 10
-//        String amount2 = "78";
-//        Boolean result1 = validation.checkWithdrawAmount(amount1);
-//        assertEquals(result1, error);
-//        boolean result2 = validation.checkWithdrawAmount(amount2);
-//        assertEquals(result2,error);
-//    }
-//    @Test
-//    public void checkWithdrawAmountMaximumAmount() {
-//        DataValidationServiceImpl validation = new DataValidationServiceImpl();
-//        String amount = "10000000";
-//        boolean result = validation.checkWithdrawAmount(amount);
-//        assertEquals(result, "Maximum amount to withdraw is $1000");
-//    }
+    @Test(expected = Exception.class)
+    public void givenInvalidAmountWhenCheckWithdrawAmountThenReturnError() throws Exception {
 
-//    @Test
-//        public void checkFundInputDataInvalid() {
-//        DataValidation validation = new DataValidation();
-//
-//        //test account destination number only
-//        String dest1 = "1664bgd";
-//        String amount1 = "20";
-//
-//        Account acc = new Account("John Doe", "012108", 100, "112233");
-//
-//        result = validation.checkFundInputData(dest1, amount1, acc, accounts);
-//        assertEquals(result, null);
-//    }
+        String error = "Invalid amount";
+        // to check numbers input only
+        String amount1 = "efbefb";
+        // to check if amount is able to divided by 10
+        String amount2 = "78";
+        String result1 = dataValidationService.checkWithdrawAmount(amount1);
+        String result2 = dataValidationService.checkWithdrawAmount(amount2);
+    }
+
+    @Test(expected = Exception.class)
+    public void givenInvalidInputWhenCheckFundInputDataReturnException() throws Exception {
+        when(accountService.getLoggedAccount()).thenReturn(loggedAccount);
+
+        //test account destination number only
+        String dest1 = "1664bgd";
+        String amount1 = "20";
+
+        String result = dataValidationService.checkFundInputData(dest1, amount1);
+    }
+    @Test
+    public void givenValidInputWhenCheckFundInputDataReturnNoError() throws Exception {
+        when(accountService.getLoggedAccount()).thenReturn(loggedAccount);
+        when(accountRepository.findById(anyString())).thenReturn(java.util.Optional.ofNullable(dest));
+        //test account destination number only
+        String dest1 = "999999";
+        String amount1 = "20";
+
+        String errorMsg = dataValidationService.checkFundInputData(dest1, amount1);
+        assertEquals(errorMsg, null);
+    }
 }

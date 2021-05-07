@@ -3,7 +3,6 @@ package com.mitrais.atm.service;
 import com.mitrais.atm.model.Account;
 import com.mitrais.atm.repository.AccountRepository;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
