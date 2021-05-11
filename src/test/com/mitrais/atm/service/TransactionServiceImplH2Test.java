@@ -15,7 +15,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Main.class)
@@ -34,13 +33,12 @@ public class TransactionServiceImplH2Test {
 
     @Before
     public void setUp() {
-        generateTransaction(accNumber, initialRowData);
+        generateTransactions(accNumber, initialRowData);
     }
 
     @Test
     public void checkDataDidSaved() {
         transactions = transactionRepository.findAll();
-        assertNotNull(transactions);
         assertEquals(transactions.size(), initialRowData);
     }
     @Test
@@ -48,18 +46,23 @@ public class TransactionServiceImplH2Test {
         Transaction transaction = transactionRepository.save(new Transaction());
         Transaction existingTrans = transactionRepository.findById(transaction.getTransactionId()).get();
 
-        assertNotNull(existingTrans);
         assertEquals(transaction.getTransactionId(), existingTrans.getTransactionId());
     }
 
     @Test
     public void givenValidInputWhenGetTransactionHistoryThenReturnLastXTransaction() {
+
+        //act
         int limit = 10;
+        Transaction transaction = generateTransaction(accNumber, 1);
+        transaction.setTransactionDate(LocalDate.of(2022,10,11));
+        transactionRepository.save(transaction);
+
+        //act
         List<Transaction> result = transactionService.getTransactionHistory(accNumber, limit);
-        assertEquals(result.size(), limit);
-        // Generate transaction method creates loop date with plusDays(1)
-        // transactionService.getTransactionHistory() is sorted with transactionDate descending
-        assertEquals(result.get(0).getTransactionDate(), LocalDate.now().plusDays(initialRowData - 1));
+
+        //assert
+        assertEquals(result.get(0), transaction);
 
     }
     @Test
@@ -71,17 +74,22 @@ public class TransactionServiceImplH2Test {
 
     }
 
-    private void generateTransaction(String accNumber, int row) {
+    private void generateTransactions(String accNumber, int row) {
         for ( int i = 0; i < row; i++) {
-            Transaction newTrans = new Transaction();
-            newTrans.setAccountNumber(accNumber);
-            newTrans.setRefNo("111111");
-            newTrans.setTransactionDate(LocalDate.now().plusDays(i));
-            newTrans.setAmount("10");
-            newTrans.setTransactionType("WITHDRAW");
-            newTrans.setBalance(10 + i);
+            Transaction newTrans = generateTransaction(accNumber, i);
             transactionRepository.save(newTrans);
         }
+    }
+
+    private Transaction generateTransaction(String accNumber, int i) {
+        Transaction newTrans = new Transaction();
+        newTrans.setAccountNumber(accNumber);
+        newTrans.setRefNo("111111");
+        newTrans.setTransactionDate(LocalDate.now().plusDays(i));
+        newTrans.setAmount("10");
+        newTrans.setTransactionType("WITHDRAW");
+        newTrans.setBalance(10 + i);
+        return newTrans;
     }
 
 

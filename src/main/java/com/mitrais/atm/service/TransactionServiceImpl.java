@@ -6,6 +6,10 @@ import com.mitrais.atm.repository.AccountRepository;
 import com.mitrais.atm.repository.TransactionRepository;
 import com.mitrais.atm.util.RandomNumberGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -38,17 +42,15 @@ public class TransactionServiceImpl implements TransactionService {
     public Map<String, Object> processWithdraw(String amount) throws Exception {
         Map<String, Object> result = new HashMap<>();
         Account account = accountService.getLoggedAccount();
-        try {
-            dataValidationService.checkWithdrawAmount(amount);
-            Transaction newTransaction = new Transaction(account.getAccNumber(), WITHDRAW, LocalDate.now(), amount, account.getBalance());
-            account.setBalance(account.getBalance() - Integer.parseInt(newTransaction.getAmount()));
-            accountRepository.save(account);
-            transactionRepository.save(newTransaction);
-            result.put("account", account);
-            result.put("transaction", newTransaction);
-        } catch (Exception e) {
-            throw e;
-        }
+
+        dataValidationService.checkWithdrawAmount(amount);
+        Transaction newTransaction = new Transaction(account.getAccNumber(), WITHDRAW, LocalDate.now(), amount, account.getBalance());
+        account.setBalance(account.getBalance() - Integer.parseInt(newTransaction.getAmount()));
+        accountRepository.save(account);
+        transactionRepository.save(newTransaction);
+        result.put("account", account);
+        result.put("transaction", newTransaction);
+
         return result;
     }
 
@@ -56,31 +58,27 @@ public class TransactionServiceImpl implements TransactionService {
     public Map<String,Object> processFundTransfer(String dest, String amount) throws Exception {
         Map<String, Object> result = new HashMap<>();
         Account origin = accountService.getLoggedAccount();
-        try {
-            dataValidationService.checkFundInputData(dest, amount);
-            Account destAccount = accountService.getAccountByAccNumber(dest);
-            String refNo = randomNumberGenerator.getRandom6DigitNumber();
-            Transaction newFundTransferTrans = new Transaction(origin.getAccNumber(), dest, FUND_TRANSFER, LocalDate.now(), amount, origin.getBalance(), refNo);
-            origin.setBalance(origin.getBalance() - Integer.parseInt(newFundTransferTrans.getAmount()));
-            destAccount.setBalance(destAccount.getBalance() + Integer.parseInt(newFundTransferTrans.getAmount()));
-            accountRepository.save(origin);
-            accountRepository.save(destAccount);
-            transactionRepository.save(newFundTransferTrans);
 
-            result.put("account", origin);
-            result.put("transaction", newFundTransferTrans);
-        }
-        catch (Exception e) {
-            throw e;
-        }
+        dataValidationService.checkFundInputData(dest, amount);
+        Account destAccount = accountService.getAccountByAccNumber(dest);
+        String refNo = randomNumberGenerator.getRandom6DigitNumber();
+        Transaction newFundTransferTrans = new Transaction(origin.getAccNumber(), dest, FUND_TRANSFER, LocalDate.now(), amount, origin.getBalance(), refNo);
+        origin.setBalance(origin.getBalance() - Integer.parseInt(newFundTransferTrans.getAmount()));
+        destAccount.setBalance(destAccount.getBalance() + Integer.parseInt(newFundTransferTrans.getAmount()));
+
+        accountRepository.save(origin);
+        accountRepository.save(destAccount);
+        transactionRepository.save(newFundTransferTrans);
+
+        result.put("account", origin);
+        result.put("transaction", newFundTransferTrans);
         return result;
     }
 
     @Override
     public List<Transaction> getTransactionHistory(String accNumber, int limit) {
-        return transactionRepository.findByAccountNumberOrderByTransactionDateDesc(accNumber).stream()
-                .limit(limit)
-                .collect(Collectors.toList());
+        Page<Transaction> transactions = transactionRepository.findAll(hasAccountNumber(accNumber), PageRequest.of(0, limit, Sort.by("transactionDate").descending()));
+        return transactions.getContent();
     }
 
     @Override
@@ -88,6 +86,10 @@ public class TransactionServiceImpl implements TransactionService {
         return transactionRepository.findByAccountNumberAndTransactionDateOrderByTransactionDateDesc(accNumber,date).stream()
                 .limit(limit)
                 .collect(Collectors.toList());
+    }
+
+    static Specification<Transaction> hasAccountNumber(String accNumber) {
+        return (transaction, cq, cb) -> cb.equal(transaction.get("accountNumber"),accNumber);
     }
 
 }

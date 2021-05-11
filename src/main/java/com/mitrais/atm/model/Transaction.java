@@ -8,6 +8,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Entity
@@ -135,5 +136,25 @@ public class Transaction {
                 ", amount='" + amount + '\'' +
                 ", balance=" + balance +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Transaction that = (Transaction) o;
+        return transactionId == that.transactionId &&
+                balance == that.balance &&
+                Objects.equals(accountNumber, that.accountNumber) &&
+                Objects.equals(descAccountNumber, that.descAccountNumber) &&
+                Objects.equals(transactionType, that.transactionType) &&
+                Objects.equals(transactionDate, that.transactionDate) &&
+                Objects.equals(amount, that.amount) &&
+                Objects.equals(refNo, that.refNo);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(transactionId, accountNumber, descAccountNumber, transactionType, transactionDate, amount, balance, refNo);
     }
 }

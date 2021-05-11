@@ -114,14 +114,6 @@ public class TransactionServiceImpltest {
 
     }
 
-    @Test
-    public void givenValidInputWhenGetTransactionHistoryThenReturnListOfTransaction() {
-        int limit = 10;
-        when(transactionRepository.findByAccountNumberOrderByTransactionDateDesc(anyString())).thenReturn(transactionList);
-
-        List<Transaction> transactions = transactionService.getTransactionHistory("112233", limit);
-        assertThat(transactions.size(), is(limit));
-    }
 
     @Test
     public void givenValidInputWhenGetTransactionHistoryWithDateThenReturnListOfTransaction() {
