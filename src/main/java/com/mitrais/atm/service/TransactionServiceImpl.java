@@ -12,12 +12,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.criteria.Predicate;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 public class TransactionServiceImpl implements TransactionService {
@@ -86,13 +86,21 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public List<Transaction> getTransactionHistoryOnDate(String accNumber, LocalDate date, int limit) {
-        return transactionRepository.findByAccountNumberAndTransactionDateOrderByTransactionDateDesc(accNumber,date).stream()
-                .limit(limit)
-                .collect(Collectors.toList());
+        Page<Transaction> transactions = transactionRepository.findAll(hasAccountNumberAndTransactionDate(accNumber, date), PageRequest.of(0, limit, Sort.by("transactionDate").descending()));
+
+        return transactions.getContent();
     }
 
     static Specification<Transaction> hasAccountNumber(String accNumber) {
-        return (transaction, cq, cb) -> cb.equal(transaction.get("accountNumber"),accNumber);
+        return (transaction, query, criteriaBuilder) -> criteriaBuilder.equal(transaction.get("accountNumber"),accNumber);
+    }
+
+    static Specification<Transaction> hasAccountNumberAndTransactionDate(String accNumber, LocalDate date) {
+        return (transaction, query, criteriaBuilder) -> {
+            Predicate accNumberPredicate = criteriaBuilder.equal(transaction.get("accountNumber"), accNumber);
+            Predicate transactionDatePredicate = criteriaBuilder.equal(transaction.get("transactionDate"), date);
+            return criteriaBuilder.and(accNumberPredicate, transactionDatePredicate);
+        };
     }
 
 }

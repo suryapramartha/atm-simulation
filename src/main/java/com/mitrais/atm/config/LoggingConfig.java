@@ -15,27 +15,22 @@ public class LoggingConfig {
     private static final Logger LOGGER = LogManager.getLogger(LoggingConfig.class);
 
     @Around("execution(* com.mitrais.atm.service.TransactionService.*(..))")
-    public Object profileAllMethod(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
+    public Object profileTransactionService(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         MethodSignature methodSignature = (MethodSignature) proceedingJoinPoint.getSignature();
 
         //Get intercepted method details
         String className = methodSignature.getDeclaringType().getSimpleName();
         String methodName = methodSignature.getName();
-
         Object[] args = proceedingJoinPoint.getArgs();
 
-
         final StopWatch stopWatch = new StopWatch();
-
-        //Measure method execution time
         stopWatch.start();
         Object result = proceedingJoinPoint.proceed(args);
         stopWatch.stop();
 
-        //Log method execution time
+        //Log method
         LOGGER.info("Execution time of " + className + "." + methodName + " :: " + stopWatch.getTotalTimeMillis() + " ms");
-        LOGGER.info("Transaction Data: "+result);
-
+        LOGGER.info("Transaction Data :: "+result);
 
         return result;
     }
