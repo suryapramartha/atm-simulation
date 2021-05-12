@@ -20,14 +20,3 @@
     INSERT INTO Account (acc_number, pin, name, balance) VALUES ('112289',120108, 'Diana', 50);
     INSERT INTO Account (acc_number, pin, name, balance) VALUES ('112290',932012, 'Saitama', 90);
 
---Transaction Data
-    INSERT INTO Transaction (transaction_id, account_number, amount, balance, transaction_date,transaction_type, ref_no) VALUES ('1',120108, '10', 80, '2021-01-01','WITHDRAW', '999999');
-    INSERT INTO Transaction (transaction_id, account_number, amount, balance, transaction_date,transaction_type, ref_no) VALUES ('2',112233, '20', 80, '2021-01-01','WITHDRAW', '999999');
-    INSERT INTO Transaction (transaction_id, account_number, amount, balance, transaction_date,transaction_type, ref_no) VALUES ('3',100000, '30', 80, '2021-01-01','WITHDRAW', '999999');
-    INSERT INTO Transaction (transaction_id, account_number, amount, balance, transaction_date,transaction_type, ref_no) VALUES ('4',100002, '40', 80, '2021-01-01','WITHDRAW', '999999');
-    INSERT INTO Transaction (transaction_id, account_number, amount, balance, transaction_date,transaction_type, ref_no) VALUES ('5',100002, '50', 80, '2021-01-01','WITHDRAW', '999999');
-    INSERT INTO Transaction (transaction_id, account_number, amount, balance, transaction_date,transaction_type, ref_no) VALUES ('6',100022, '60', 80, '2021-01-01','WITHDRAW', '999999');
-    INSERT INTO Transaction (transaction_id, account_number, amount, balance, transaction_date,transaction_type, ref_no) VALUES ('7',100009, '70', 80, '2021-01-01','WITHDRAW', '999999');
-    INSERT INTO Transaction (transaction_id, account_number, amount, balance, transaction_date,transaction_type, ref_no) VALUES ('8',100004, '80', 80, '2021-01-01','WITHDRAW', '999999');
-    INSERT INTO Transaction (transaction_id, account_number, amount, balance, transaction_date,transaction_type, ref_no) VALUES ('9',100003, '90', 80, '2021-01-01','WITHDRAW', '999999');
-    INSERT INTO Transaction (transaction_id, account_number, amount, balance, transaction_date,transaction_type, ref_no) VALUES ('10',100004, '010', 80, '2021-01-01','WITHDRAW', '999999');
