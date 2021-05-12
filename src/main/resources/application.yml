@@ -8,6 +8,7 @@ spring:
     initialization-mode: always
     initialize: true
     schema: classpath:/db/V2.0__initialize_db.sql
+    data: classpath:/db/V2.0__initialize_db_data.sql
     continue-on-error: true
 
 

@@ -12,6 +12,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
@@ -38,6 +39,7 @@ public class TransactionServiceImpl implements TransactionService {
     @Autowired
     private RandomNumberGenerator randomNumberGenerator;
 
+    @Transactional
     @Override
     public Map<String, Object> processWithdraw(String amount) throws Exception {
         Map<String, Object> result = new HashMap<>();
@@ -54,6 +56,7 @@ public class TransactionServiceImpl implements TransactionService {
         return result;
     }
 
+    @Transactional
     @Override
     public Map<String,Object> processFundTransfer(String dest, String amount) throws Exception {
         Map<String, Object> result = new HashMap<>();
