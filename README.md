@@ -1,5 +1,6 @@
 # ATM Simulation app
 
+URL : http://ec2-13-250-127-73.ap-southeast-1.compute.amazonaws.com:8080/
 ## Project Requirements
 - Maven
 - PostgreSQL DB 
@@ -24,7 +25,10 @@ if you are using Intellij IDE, you can create JAR by
 - Build the artifact on menu **Build > Build Artifacts**
 - From the JAR directory, Run it with the command `java -jar {jar_name}.jar`
 
-
+## ATM-Simulation 4
+- Add Spring Security Support
+- Add Logging Support
+- 
 ## ATM-Simulation 3
 - Add Maven Support
 - Add Spring Boot Support
