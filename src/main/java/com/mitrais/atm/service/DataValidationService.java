@@ -1,7 +1,7 @@
 package com.mitrais.atm.service;
 
 public interface DataValidationService {
-    String checkLoginCredential(String accNumber, String accPin);
+    String checkLoginCredential(String accNumber, String accPin) throws Exception;
 
     String checkWithdrawAmount(String amount) throws Exception;
 

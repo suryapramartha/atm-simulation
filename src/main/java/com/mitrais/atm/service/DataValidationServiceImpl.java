@@ -45,7 +45,7 @@ public class DataValidationServiceImpl implements DataValidationService {
     }
 
     @Override
-    public String checkLoginCredential(String accNumber, String accPin) {
+    public String checkLoginCredential(String accNumber, String accPin) throws Exception {
         String error = null;
         List<Account> accounts = accountRepository.findAll();
         Predicate<Account> filterAccount = p ->
@@ -55,7 +55,8 @@ public class DataValidationServiceImpl implements DataValidationService {
         if(!result.isPresent()) {
             error = "Invalid Account Number/PIN";
         }
-        return error;
+        if(error != null) throw new Exception(error);
+        return null;
     }
 
     @Override

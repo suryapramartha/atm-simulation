@@ -18,10 +18,15 @@ public class AccountServiceImpl implements AccountService{
     @Autowired
     private AccountRepository accountRepository;
 
+    @Autowired
+    private DataValidationService dataValidationService;
+
     private static final String CSV_SEPARATOR = ",";
 
     @Override
-    public Account getAccount(String accNumber, String accPin) {
+    public Account getAccount(String accNumber, String accPin) throws Exception {
+        dataValidationService.checkLoginCredential(accNumber, accPin);
+
         return accountRepository.findByAccNumberAndPin(accNumber, accPin);
     }
 

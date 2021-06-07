@@ -22,14 +22,13 @@ public class LoginController {
             @RequestParam(value = "accNumber") String accNumber,
             @RequestParam(value = "accPin") String accPin,
             Model model) {
-        String errorMsg = dataValidationService.checkLoginCredential(accNumber, accPin);
-        if (errorMsg == null) {
+        try {
             Account account = accountService.getAccount(accNumber, accPin);
             accountService.setLoggedAccount(account);
             model.addAttribute("account", account);
             return "screen/transactionScreen";
-        } else {
-            model.addAttribute("errorMessage", errorMsg);
+        } catch (Exception e){
+            model.addAttribute("errorMessage", e.getMessage());
             return "index";
         }
     }

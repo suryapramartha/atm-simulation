@@ -59,21 +59,5 @@ public class LoginControllerTest {
                 .andReturn();
     }
 
-    @Test
-    public void givenInvalidInputWhenLoginThenReturnError() throws Exception {
-        String errorMsg = "error";
-        Mockito.when(dataValidationService.checkLoginCredential(anyString(), anyString())).thenReturn(errorMsg);
-        Mockito.when(accountService.getAccount(anyString(), anyString())).thenReturn(origin);
-
-        mockMvc.perform(MockMvcRequestBuilders
-                .post("/login")
-                .param("accNumber",anyString())
-                .param("accPin", anyString()))
-                .andExpect(status().isOk())
-                .andExpect(view().name("index"))
-                .andExpect(model().attribute("errorMessage", errorMsg))
-                .andDo(MockMvcResultHandlers.print())
-                .andReturn();
-    }
 
 }

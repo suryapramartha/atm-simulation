@@ -7,18 +7,23 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AccountServiceImplTest {
     @InjectMocks
     private AccountServiceImpl accountService;
+
+    @InjectMocks
+    private DataValidationServiceImpl dataValidationService;
 
     @Mock
     private AccountRepository accountRepository;
@@ -34,14 +39,6 @@ public class AccountServiceImplTest {
         account.setPin("111111");
     }
 
-    @Test
-    public void givenValidAccNumberAndPinWhenGetAccountThenReturnAccount() {
-        when(accountRepository.findByAccNumberAndPin(account.getAccNumber(), account.getPin())).thenReturn(account);
-        Account existingAcc = accountService.getAccount(account.getAccNumber(),account.getPin());
-
-        assertThat(account.getAccNumber(), is(existingAcc.getAccNumber()));
-        assertThat(account.getName(), is(existingAcc.getName()));
-    }
     @Test
     public void givenValidAccNumberWhenGetAccountThenReturnAccount() throws Exception {
         when(accountRepository.findById(account.getAccNumber())).thenReturn(Optional.of(account));
